@@ -1,0 +1,11 @@
+#eclipse specific files
+.classpath
+.settings/
+.project
+
+#maven specific files
+/target
+
+#project specific files
+processing.log
+deliverables/lib/*.jar

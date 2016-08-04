@@ -9,3 +9,4 @@
 #project specific files
 processing.log
 deliverables/lib/*.jar
+deliverables/

@@ -30,6 +30,8 @@ public class WorkbookAnalyzer {
 
 	public static final int UNSET_INT = Integer.MIN_VALUE;
 	private static final String CREATED_FROM = "created from %s:%s";
+	public static final String EMPTY_CELL_DATA = "";
+	
 	private static final Logger logger = LoggerFactory.getLogger(WorkbookAnalyzer.class);
 
 	private static String currentFilename;
@@ -74,7 +76,8 @@ public class WorkbookAnalyzer {
 					data = new LinkedList<>();
 					for(int y = 0; y < totalColumns; y++) {
 						try {
-							String columnName = table.get(y);
+							IColumn column = table.get(y);
+							String columnName = column.getName();
 							String value = getStringValue(row.getCell(y));
 
 							adjustColumn(table.get(columnName), value);
@@ -85,7 +88,7 @@ public class WorkbookAnalyzer {
 							logger.debug("obtaining the {} value of cell {}:{}", currentFilename
 									, BuilderUtil.columnNumberToExcelColumnName(x), y);
 							//add empty cell data
-							data.add("");
+							data.add(EMPTY_CELL_DATA);
 						}
 					}
 

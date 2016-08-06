@@ -11,7 +11,8 @@ import org.apache.poi.ss.usermodel.Sheet;
  * @author Jason Flores
  */
 public class BuilderUtil {
-	
+
+	public static final int UNSET_INT = Integer.MIN_VALUE;
 	public static final String NEW_LINE = System.getProperty("line.separator");
 
 	/**

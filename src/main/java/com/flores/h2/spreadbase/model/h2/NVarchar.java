@@ -13,7 +13,7 @@ public class NVarchar extends DataDefinition {
 
 	@Override
 	public String getDefinition() {
-		String largestValue = String.valueOf(column.getAccuracy().precision);
+		String largestValue = String.valueOf(column.getPrecision());
 		return String.format(DEFINITION, largestValue.length());
 	}
 }

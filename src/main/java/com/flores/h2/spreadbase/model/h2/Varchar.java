@@ -17,6 +17,6 @@ public class Varchar extends DataDefinition {
 
 	@Override
 	public String getDefinition() {
-		return String.format(DEFINITION, column.getAccuracy().precision);
+		return String.format(DEFINITION, column.getPrecision());
 	}
 }

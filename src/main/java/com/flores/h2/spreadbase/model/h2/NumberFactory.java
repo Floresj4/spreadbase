@@ -3,7 +3,7 @@ package com.flores.h2.spreadbase.model.h2;
 import com.flores.h2.spreadbase.exception.UnsupportedTypeException;
 import com.flores.h2.spreadbase.model.DataDefinition;
 import com.flores.h2.spreadbase.model.IColumn;
-import com.flores.h2.spreadbase.model.impl.Accuracy;
+import com.flores.h2.spreadbase.util.BuilderUtil;
 
 /**
  * @author Jason Flores
@@ -23,10 +23,10 @@ public class NumberFactory {
 					column.getType().getSimpleName() + " is not a supported number class");
 		
 		//get the current columns accuracy
-		Accuracy acc = column.getAccuracy();
-		return (acc.scale == -1)
-			? asNaturalNumber(column, acc.precision)
-					: asRationalNumber(column, acc.precision, acc.scale);
+
+		return (column.getScale() == BuilderUtil.UNSET_INT)
+			? asNaturalNumber(column, column.getPrecision())
+					: asRationalNumber(column, column.getPrecision(), column.getScale());
 	}
 
 	/**

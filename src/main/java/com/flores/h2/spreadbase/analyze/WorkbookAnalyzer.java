@@ -18,7 +18,7 @@ import org.supercsv.prefs.CsvPreference;
 
 import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.ITable;
-import com.flores.h2.spreadbase.model.impl.Accuracy;
+import com.flores.h2.spreadbase.model.impl.Column;
 import com.flores.h2.spreadbase.model.impl.Table;
 import com.flores.h2.spreadbase.util.BuilderUtil;
 
@@ -198,64 +198,9 @@ public class WorkbookAnalyzer {
 				: sValue;
 	}
 
-	private static void adjustColumn(IColumn column, String currentValue) {
-		Accuracy acc = null;
-		Class<?> c = null;
+	public static IColumn adjustColumn(IColumn column, String currentValue) {
+		IColumn updateColumn = new Column(column);
 
-		try {
-			if(currentValue == null || currentValue.trim().isEmpty())
-				return;
-
-			if(currentValue.startsWith(("0")))
-				throw new NumberFormatException();
-
-			//try to parse as a double first
-			Double.parseDouble(currentValue);
-
-			/**
-			 * if the parse was successful get the precision
-			 * if a decimal is present otherwise use as an
-			 * integer
-			 */
-			int decimalIndex = currentValue.indexOf(".");
-			if(decimalIndex != -1) {
-				int precision = currentValue.substring(0, decimalIndex).length();
-				int scale = currentValue.substring(decimalIndex).length();
-				
-				//create the accuracy and class type
-				acc = new Accuracy(precision, scale);
-				c = Double.class;
-			} else {
-				acc = new Accuracy(Integer.parseInt(currentValue));
-				c = Integer.class;
-			}			
-		} catch(NumberFormatException e) {
-			//the parse failed, use as a simple string
-			acc = new Accuracy(currentValue.length());
-			c = String.class;
-		} catch(NullPointerException e) {
-			//default to zero for now
-			acc = new Accuracy(0);
-			c = String.class;
-		}
-	
-		//if unset, set
-		if(column.getAccuracy() == null) {
-			column.setAccuracy(acc);
-			column.setType(c);
-		} else {
-			Accuracy currentAcc = column.getAccuracy();
-
-			if(c == String.class)
-				column.setType(c);
-
-			//take the larger of the precision values
-			if(acc.precision > currentAcc.precision)
-				currentAcc.precision = acc.precision;
-
-			//table the larger of the scale values
-			if(acc.scale > currentAcc.scale)
-				currentAcc.scale = acc.scale;
-		}
+		return updateColumn;
 	}
 }

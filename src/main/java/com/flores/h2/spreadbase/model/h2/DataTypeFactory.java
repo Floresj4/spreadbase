@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.flores.h2.spreadbase.exception.UnsupportedTypeException;
 import com.flores.h2.spreadbase.model.DataDefinition;
 import com.flores.h2.spreadbase.model.IColumn;
-import com.flores.h2.spreadbase.model.impl.Accuracy;
 import com.flores.h2.spreadbase.model.impl.Column;
 
 /**
@@ -43,7 +42,7 @@ public class DataTypeFactory {
 /**
  * If a type was left undetermined ("unset"), because it was probably
  * an empty sheet or csv, use this class as a placeholder
- * @author a2jagzz
+ * @author Jason
  */
 class DefaultColumn extends Column {
 
@@ -51,9 +50,7 @@ class DefaultColumn extends Column {
 		this(name, String.class, 5, -1);
 	}
 
-	public DefaultColumn(String name, Class<?>type, int precision, int scale) {
-		super(name);
-		setType(type);
-		setAccuracy(new Accuracy(precision, scale));
+	public DefaultColumn(String name, Class<?>c, int precision, int scale) {
+		super(name, null, c, precision, scale);
 	}	
 }

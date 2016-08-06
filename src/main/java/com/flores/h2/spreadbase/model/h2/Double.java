@@ -2,7 +2,6 @@ package com.flores.h2.spreadbase.model.h2;
 
 import com.flores.h2.spreadbase.model.DataDefinition;
 import com.flores.h2.spreadbase.model.IColumn;
-import com.flores.h2.spreadbase.model.impl.Accuracy;
 
 /**
  * 
@@ -18,7 +17,7 @@ public class Double extends DataDefinition {
 
 	@Override
 	public String getDefinition() {
-		Accuracy acc = column.getAccuracy();
-		return String.format(DEFINITION, acc.precision, acc.scale);
+		return String.format(DEFINITION
+				, column.getPrecision(), column.getScale());
 	}
 }

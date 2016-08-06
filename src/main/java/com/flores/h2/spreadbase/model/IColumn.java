@@ -1,15 +1,11 @@
 package com.flores.h2.spreadbase.model;
 
-import com.flores.h2.spreadbase.model.impl.Accuracy;
 
 /**
- * 
+ * TODO: move IMeasurable to a separate IColumn derivative
  * @author Jason Flores
  */
-public interface IColumn extends IDescribable {
+public interface IColumn extends IDescribable, IMeasurable {
 	public Class<?> getType();
-	public Accuracy getAccuracy();
-	
-	public void setAccuracy(Accuracy accuracy);	
 	public void setType(Class<?> clazz);
 }

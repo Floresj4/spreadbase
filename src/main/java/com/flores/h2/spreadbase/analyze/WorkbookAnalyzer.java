@@ -201,6 +201,8 @@ public class WorkbookAnalyzer {
 	public static IColumn adjustColumn(IColumn column, String currentValue) {
 		IColumn updateColumn = new Column(column);
 
+		
+		
 		return updateColumn;
 	}
 }

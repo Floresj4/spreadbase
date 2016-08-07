@@ -36,13 +36,15 @@ public class NumberFactory {
 	 * @return a valid numeric data type
 	 */
 	private static DataDefinition asNaturalNumber(IColumn column, int maxValue) {
-		if (maxValue >= -128 && maxValue <= 127) { 
+
+		if (TinyInt.inRange(maxValue)) 
 			return new TinyInt(column); 
-		} else if (maxValue >= -32768 && maxValue <= 32767) {
+		 
+		else if (SmallInt.inRange(maxValue))
 			return new SmallInt(column);
-		} else {
+		
+		else
 			return new Int(column);
-		}
 	}
 	
 	/**

@@ -199,10 +199,30 @@ public class WorkbookAnalyzer {
 	}
 
 	public static IColumn adjustColumn(IColumn column, String currentValue) {
-		IColumn updateColumn = new Column(column);
-
-		
-		
-		return updateColumn;
+		return new Column(column);
 	}
+	
+	public static IColumn makeColumn(String dataValue) {
+		Class<?> type = null;
+		int precision = BuilderUtil.UNSET_INT;
+		int scale = BuilderUtil.UNSET_INT;
+		
+		try {	//determine type
+			Double d = Double.parseDouble(dataValue);
+				//parse for precision and scale
+			String temp[] = d.toString().split(".");
+			precision = temp[0].length();
+			scale = temp[1].length();
+
+			type = Double.class;
+		}
+		catch(NumberFormatException nfe) {
+			//default to string
+			type = String.class;
+			precision = dataValue.length();
+		}
+		
+		return new Column(type, precision, scale);
+	}
+	
 }

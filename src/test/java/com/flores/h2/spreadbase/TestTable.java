@@ -1,0 +1,20 @@
+package com.flores.h2.spreadbase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
+
+import com.flores.h2.spreadbase.model.ITable;
+import com.flores.h2.spreadbase.model.impl.Column;
+import com.flores.h2.spreadbase.model.impl.Table;
+
+public class TestTable {
+	
+	@Test
+	public void testCreate() {
+		ITable t = new Table("table1", "testing table...", new String[]{"A", "B"});
+		assertNotNull(t.get(0));
+		assertEquals(Column.class, t.get(0).getClass());
+	}
+}

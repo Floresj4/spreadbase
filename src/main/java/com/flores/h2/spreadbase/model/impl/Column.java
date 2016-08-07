@@ -27,6 +27,14 @@ public class Column implements IColumn, IMeasurable {
 
 	private Class<?> type;
 
+	public Column(Class<?> c, int precision) {
+		this(c, precision, BuilderUtil.UNSET_INT);
+	}
+
+	public Column(Class<?> c, int precision, int scale) {
+		this(null, null, c, precision, scale);
+	}
+
 	public Column(IColumn c) {
 		this(c.getName()
 			, c.getDescription()
@@ -41,14 +49,6 @@ public class Column implements IColumn, IMeasurable {
 
 	public Column(String name, String description) {
 		this(name, description, null, 0, BuilderUtil.UNSET_INT);
-	}
-
-	public Column(Class<?> c, int precision) {
-		this(c, precision, BuilderUtil.UNSET_INT);
-	}
-
-	public Column(Class<?> c, int precision, int scale) {
-		this(null, null, c, precision, scale);
 	}
 	
 	public Column(String name, String description, Class<?> c, int precision) {
@@ -84,6 +84,16 @@ public class Column implements IColumn, IMeasurable {
 	@Override
 	public Class<?> getType() {
 		return type;
+	}
+
+	@Override
+	public void setDescription(String desc) {
+		this.description = desc;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setPrecision(int precision) {

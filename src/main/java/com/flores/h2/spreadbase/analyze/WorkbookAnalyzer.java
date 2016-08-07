@@ -21,6 +21,7 @@ import com.flores.h2.spreadbase.model.ITable;
 import com.flores.h2.spreadbase.model.impl.Column;
 import com.flores.h2.spreadbase.model.impl.Table;
 import com.flores.h2.spreadbase.util.BuilderUtil;
+import com.flores.h2.spreadbase.util.TypeHierarchy;
 
 /**
  * 
@@ -35,6 +36,8 @@ public class WorkbookAnalyzer {
 	private static final Logger logger = LoggerFactory.getLogger(WorkbookAnalyzer.class);
 
 	private static String currentFilename;
+
+	protected static TypeHierarchy hierarchy = new TypeHierarchy();
 
 	/**
 	 * 
@@ -198,10 +201,35 @@ public class WorkbookAnalyzer {
 				: sValue;
 	}
 
-	public static IColumn adjustColumn(IColumn column, String currentValue) {
-		return new Column(column);
+	/**
+	 * Adjust the column detail (type, precision, scale) of a column
+	 * based on the value being passed in.
+	 * @param column to adjust
+	 * @param value to adjust based on
+	 * @return a non-null IColumn implementation modified based on the
+	 * current rules
+	 */
+	public static IColumn adjustColumn(IColumn column, String value) {
+		IColumn newColumn = makeColumn(value);
+		newColumn.setName(column.getName());
+		newColumn.setDescription(column.getDescription());
+		
+		//adjust the attributes
+		newColumn.setType(hierarchy.compare(column, newColumn));
+		newColumn.setPrecision(column.getPrecision() > newColumn.getPrecision() 
+				? column.getPrecision() : newColumn.getPrecision());
+		newColumn.setScale(column.getScale() > newColumn.getScale()
+				? column.getScale() : newColumn.getScale());
+
+		return newColumn;
 	}
 	
+	/**
+	 * Make a column!  Infer type, scale, and precision based on
+	 * the {@code dataValue} param
+	 * @param dataValue to create
+	 * @return
+	 */
 	public static IColumn makeColumn(String dataValue) {
 		Class<?> type = null;
 		int precision = BuilderUtil.UNSET_INT;
@@ -226,6 +254,11 @@ public class WorkbookAnalyzer {
 			//default to string
 			type = String.class;
 			precision = dataValue.length();
+		}
+		catch(NullPointerException npe) {
+			//if dataValue is null, default string
+			type = String.class;
+			//leave precision and scale unset
 		}
 		
 		return new Column(type, precision, scale);

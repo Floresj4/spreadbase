@@ -52,23 +52,8 @@ public class Table implements ITable {
 	}
 
 	@Override
-	public String getDescription() {
-		return description;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public int size() {
-		return columns.size();
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return columns.isEmpty();
+	public void clear() {
+		columns.clear();
 	}
 
 	@Override
@@ -79,6 +64,11 @@ public class Table implements ITable {
 	@Override
 	public boolean containsValue(Object value) {
 		return columns.containsValue(value);
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<String, IColumn>> entrySet() {
+		return columns.entrySet();
 	}
 
 	@Override
@@ -103,23 +93,23 @@ public class Table implements ITable {
 	}
 
 	@Override
-	public IColumn put(String key, IColumn value) {
-		return columns.put(key, value);
+	public String getDescription() {
+		return description;
 	}
 
 	@Override
-	public IColumn remove(Object key) {
-		return columns.remove(key);
+	public File getFromFile() {
+		return fromFile;
 	}
 
 	@Override
-	public void putAll(Map<? extends String, ? extends IColumn> m) {
-		columns.putAll(m);
+	public String getName() {
+		return name;
 	}
 
 	@Override
-	public void clear() {
-		columns.clear();
+	public boolean isEmpty() {
+		return columns.isEmpty();
 	}
 
 	@Override
@@ -128,13 +118,38 @@ public class Table implements ITable {
 	}
 
 	@Override
-	public Collection<IColumn> values() {
-		return columns.values();
+	public IColumn put(String key, IColumn value) {
+		return columns.put(key, value);
 	}
 
 	@Override
-	public Set<java.util.Map.Entry<String, IColumn>> entrySet() {
-		return columns.entrySet();
+	public void putAll(Map<? extends String, ? extends IColumn> m) {
+		columns.putAll(m);
+	}
+
+	@Override
+	public IColumn remove(Object key) {
+		return columns.remove(key);
+	}
+
+	@Override
+	public void setDescription(String desc) {
+		this.description = desc;
+	}
+	
+	@Override
+	public void setFromFile(File f) {
+		this.fromFile = f;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public int size() {
+		return columns.size();
 	}
 	
 	public String toString() {
@@ -148,12 +163,7 @@ public class Table implements ITable {
 	}
 
 	@Override
-	public void setFromFile(File f) {
-		this.fromFile = f;
-	}
-
-	@Override
-	public File getFromFile() {
-		return fromFile;
+	public Collection<IColumn> values() {
+		return columns.values();
 	}
 }

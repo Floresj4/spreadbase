@@ -41,9 +41,9 @@ public class TestColumnRules {
 
 	@Test
 	public void testResizeString() {
-//		String testval = "xxxxx";
-//		IColumn col = new Column(String.class, 4);
-//		assertEquals(testval.length(), WorkbookAnalyzer.adjustColumn(col, testval)
-//				.getPrecision());
+		String testval = "xxxxx";
+		IColumn col = new Column(String.class, 4);
+		assertEquals(testval.length(), WorkbookAnalyzer.adjustColumn(col, testval)
+				.getPrecision());
 	}
 }

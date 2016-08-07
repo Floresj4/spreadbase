@@ -11,8 +11,10 @@ import com.flores.h2.spreadbase.model.ITable;
 import com.flores.h2.spreadbase.util.BuilderUtil;
 
 /**
- * A map of columns based on a LinkedHashMap
- * 
+ * A map of columns backed by a LinkedHashMap.  If any constructor 
+ * calls are made where the {@code String columns[]} parameter is 
+ * set to null, the table will be created with an empty map of columns.
+ *  
  * @author Jason Flores
  * @see LinkedHashMap
  */
@@ -41,7 +43,11 @@ public class Table implements ITable {
 		this.name = name;
 		this.description = description;
 		this.columns = new LinkedHashMap<>();
-		for(String c : columns)	this.columns.put(c, new Column(c));
+		
+		if(columns != null)
+			for(String c : columns)	
+				this.columns.put(c, new Column(c));
+		
 		this.fromFile = fromFile;
 	}
 
@@ -77,6 +83,22 @@ public class Table implements ITable {
 
 	@Override
 	public IColumn get(Object key) {
+		
+		if(key instanceof Integer) {
+			int k = (int)key;
+
+			if(k > this.size())
+				throw new IndexOutOfBoundsException(
+						String.format("The index %d is larger than the number of columns %d"
+								, k, this.size()));
+			int i = 0;
+			for(Entry<String, IColumn> c : columns.entrySet()) {
+				if(i == k) return c.getValue();
+				i++;
+			}
+		}
+		
+		
 		return columns.get(key);
 	}
 
@@ -90,27 +112,6 @@ public class Table implements ITable {
 		return columns.remove(key);
 	}
 
-	/**
-	 * iterate the entrySet and return the appropriate column
-	 * based on index
-	 * @param index of column to find
-	 * @return a column or null if not found
-	 */
-	public IColumn get(int index) { 
-		if(index > this.size())
-			throw new IndexOutOfBoundsException(
-					String.format("The index %d is larger than the number of columns %d"
-							, index, this.size()));
-		int i = 0;
-		for(Entry<String, IColumn> c : columns.entrySet()) {
-			if(i == index)
-				return c.getValue();
-			i++;
-		}
-		
-		return null;
-	}
-	
 	@Override
 	public void putAll(Map<? extends String, ? extends IColumn> m) {
 		columns.putAll(m);

@@ -17,10 +17,25 @@ public class TestColumnRules {
 
 	@Test
 	public void testColumnCreation() {
+		//create String
 		IColumn column = WorkbookAnalyzer.makeColumn("xxxxx");
 		assertNotNull(column);
 		assertTrue(column.getType().getTypeName().equals(String.class.getTypeName()));
 		assertEquals(5, column.getPrecision());
+		assertEquals(BuilderUtil.UNSET_INT, column.getScale());
+		
+		//create Double
+		column = WorkbookAnalyzer.makeColumn("1000.23");
+		assertNotNull(column);
+		assertTrue(column.getType().getTypeName().equals(Double.class.getTypeName()));
+		assertEquals(4, column.getPrecision());
+		assertEquals(2, column.getScale());
+		
+		//create Integer
+		column = WorkbookAnalyzer.makeColumn("1000");
+		assertNotNull(column);
+		assertTrue(column.getType().getTypeName().equals(Integer.class.getTypeName()));
+		assertEquals(1000, column.getPrecision());
 		assertEquals(BuilderUtil.UNSET_INT, column.getScale());
 	}
 

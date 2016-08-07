@@ -209,12 +209,18 @@ public class WorkbookAnalyzer {
 		
 		try {	//determine type
 			Double d = Double.parseDouble(dataValue);
+			
 				//parse for precision and scale
-			String temp[] = d.toString().split(".");
-			precision = temp[0].length();
-			scale = temp[1].length();
+			String temp[] = d.toString().split("\\.");
+			boolean hasScale = d != Math.floor(d);
+			if(hasScale) {
+				precision = temp[0].length();
+				scale = temp[1].length();
+			} else { //use the actual data value
+				precision = Integer.valueOf(dataValue);
+			}
 
-			type = Double.class;
+			type = hasScale ? Double.class : Integer.class;
 		}
 		catch(NumberFormatException nfe) {
 			//default to string

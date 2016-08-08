@@ -242,10 +242,10 @@ public class WorkbookAnalyzer {
 			String temp[] = d.toString().split("\\.");
 			boolean hasScale = d != Math.floor(d);
 			if(hasScale) {
-				precision = temp[0].length();
-				scale = temp[1].length();
+				precision = Integer.parseInt(temp[0]);
+				scale = Integer.parseInt(temp[1]);
 			} else { //use the actual data value
-				precision = Integer.valueOf(dataValue);
+				precision = Integer.parseInt(dataValue);
 			}
 
 			type = hasScale ? Double.class : Integer.class;

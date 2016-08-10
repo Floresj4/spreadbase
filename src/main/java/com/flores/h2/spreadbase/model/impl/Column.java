@@ -18,7 +18,7 @@ public class Column implements IColumn, IMeasurable {
 	 * Precision of the current data type. For data types not requiring both
 	 * precision and scale, this field is synonymous with size.
 	 */
-	protected int precision;
+	protected double precision;
 
 	/**
 	 * For numeric data types with a decimal value
@@ -74,7 +74,7 @@ public class Column implements IColumn, IMeasurable {
 	}
 
 	public int getPrecision() {
-		return precision;
+		return (int)precision;
 	}
 
 	public int getScale() {

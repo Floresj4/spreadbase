@@ -55,77 +55,83 @@ public class TestColumnRules {
 	
 	@Test
 	public void testNumberResize() {
-		String testval = "10";	//precision should be adjusted
+		//the precision should be adjusted
+		String testval = "10";
 		IColumn testcol = makeColumn(testval);
+		IColumn adjcol = null;
+
 		assertEquals(10, testcol.getPrecision());
 		assertEquals(100, adjustColumn(
 				testcol, "100").getPrecision());
-		
-		testval = "125";	//precision should not be adjusted
+
+		//precision should not be adjusted
+		testval = "125";	
 		testcol = makeColumn(testval);
 		assertEquals(125, testcol.getPrecision());
-		assertEquals(125, adjustColumn(
-				testcol, "120").getPrecision());
+		assertEquals(125, adjustColumn(testcol, "120")
+				.getPrecision());
 
-		testval = "58.27";	//precision should be adjusted
+		//precision should be adjusted
+		testval = "58.27";
 		testcol = makeColumn(testval);
 		assertEquals(58, testcol.getPrecision());
 		assertEquals(27, testcol.getScale());
-		
-		IColumn outcol = null;	//scale or precision should change
-		outcol = adjustColumn(testcol, "262.333");
-		assertEquals(262, outcol.getPrecision());
-		assertEquals(333, outcol.getScale());
-		
+
+		adjcol = adjustColumn(testcol, "262.333");
+		assertEquals(262, adjcol.getPrecision());
+		assertEquals(333, adjcol.getScale());
+
 		//scale or precision should not change
-		outcol = adjustColumn(outcol, "1.1");
-		assertEquals(262, outcol.getPrecision());
-		assertEquals(333, outcol.getScale());
+		adjcol = adjustColumn(adjcol, "1.1");
+		assertEquals(262, adjcol.getPrecision());
+		assertEquals(333, adjcol.getScale());
 
 		//only one attribute changes
-		outcol = adjustColumn(outcol, "224565.22");
-		assertEquals(224565, outcol.getPrecision());
-		assertEquals(333, outcol.getScale());
+		adjcol = adjustColumn(adjcol, "224565.22");
+		assertEquals(224565, adjcol.getPrecision());
+		assertEquals(333, adjcol.getScale());
 	}
 	
 	@Test
-	public void testTypeChange() {
+	public void typeChangeIntegerDouble() {
+		IColumn testcol, adjcol;
 		String testval;
-		IColumn testcol, outcol;
 
-		{
-			/**
-			 * Integer -> Double
-			 */
-			testval = "1";
-			testcol = makeColumn(testval);
-			assertTrue(testcol.getType().getTypeName().equals(Integer.class.getTypeName()));
-			assertEquals(1, testcol.getPrecision());
-			assertEquals(BuilderUtil.UNSET_INT, testcol.getScale());
-			
-			//type should change along with precision and scale
-			outcol = adjustColumn(testcol, "22.2");
-			assertTrue(outcol.getType().getTypeName().equals(Double.class.getTypeName()));
-			assertEquals(22, outcol.getPrecision());
-			assertEquals(2, outcol.getScale());
-		}
+		/**
+		 * Integer -> Double
+		 */
+		testval = "1";
+		testcol = makeColumn(testval);
+		assertTrue(testcol.getType().getTypeName().equals(Integer.class.getTypeName()));
+		assertEquals(1, testcol.getPrecision());
+		assertEquals(BuilderUtil.UNSET_INT, testcol.getScale());
 		
-		{
-			/**
-			 * Double -> Integer
-			 * This should not be possible, to narrow the scale
-			 * of a column
-			 */
-			testval = "461.89";
-			testcol = makeColumn(testval);
-			assertTrue(testcol.getType().getTypeName().equals(Double.class.getTypeName()));
-			assertEquals(461, testcol.getPrecision());
-			assertEquals(89, testcol.getScale());
-	
-			outcol = adjustColumn(testcol, "6");
-			assertTrue(outcol.getType().getTypeName().equals(Double.class.getTypeName()));
-			assertEquals(461, outcol.getPrecision());
-			assertEquals(89, outcol.getScale());
-		}
+		//type should change along with precision and scale
+		adjcol = adjustColumn(testcol, "22.2");
+		assertTrue(adjcol.getType().getTypeName().equals(Double.class.getTypeName()));
+		assertEquals(22, adjcol.getPrecision());
+		assertEquals(2, adjcol.getScale());
+	}
+
+	@Test
+	public void typeChangeDoubleInteger() {
+		IColumn testcol, adjcol;
+		String testval;
+
+		/**
+		 * Double -> Integer
+		 * This should not be possible, to narrow the scale
+		 * of a column
+		 */
+		testval = "461.89";
+		testcol = makeColumn(testval);
+		assertTrue(testcol.getType().getTypeName().equals(Double.class.getTypeName()));
+		assertEquals(461, testcol.getPrecision());
+		assertEquals(89, testcol.getScale());
+
+		adjcol = adjustColumn(testcol, "6");
+		assertTrue(adjcol.getType().getTypeName().equals(Double.class.getTypeName()));
+		assertEquals(461, adjcol.getPrecision());
+		assertEquals(89, adjcol.getScale());
 	}
 }

@@ -37,6 +37,9 @@ public class WorkbookAnalyzer {
 
 	private static String currentFilename;
 
+	/**
+	 * 
+	 */
 	protected static TypeHierarchy hierarchy = new TypeHierarchy();
 
 	/**

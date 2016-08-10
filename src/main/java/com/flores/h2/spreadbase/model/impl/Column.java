@@ -18,12 +18,14 @@ public class Column implements IColumn, IMeasurable {
 	 * Precision of the current data type. For data types not requiring both
 	 * precision and scale, this field is synonymous with size.
 	 */
-	protected double precision;
+	protected int precision;
+	protected int lastprecision;
 
 	/**
 	 * For numeric data types with a decimal value
 	 */
 	protected int scale;
+	protected int lastscale;
 
 	private Class<?> type;
 
@@ -74,7 +76,7 @@ public class Column implements IColumn, IMeasurable {
 	}
 
 	public int getPrecision() {
-		return (int)precision;
+		return precision;
 	}
 
 	public int getScale() {
@@ -121,5 +123,15 @@ public class Column implements IColumn, IMeasurable {
 			.append("}");
 		
 		return builder.toString();
+	}
+
+	@Override
+	public void lastPrecision(int precision) {
+		this.lastprecision = precision;
+	}
+	
+	@Override
+	public void lastScale(int scale) {
+		this.lastscale = scale;
 	}
 }

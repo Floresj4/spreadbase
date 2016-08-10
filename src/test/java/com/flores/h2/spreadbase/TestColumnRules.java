@@ -91,15 +91,15 @@ public class TestColumnRules {
 		assertEquals(224565, adjcol.getPrecision());
 		assertEquals(333, adjcol.getScale());
 	}
-	
+
+	/**
+	 * Integer -> Double
+	 */
 	@Test
 	public void typeChangeIntegerDouble() {
 		IColumn testcol, adjcol;
 		String testval;
 
-		/**
-		 * Integer -> Double
-		 */
 		testval = "1";
 		testcol = makeColumn(testval);
 		assertTrue(testcol.getType().getTypeName().equals(Integer.class.getTypeName()));
@@ -113,16 +113,33 @@ public class TestColumnRules {
 		assertEquals(2, adjcol.getScale());
 	}
 
+	/**
+	 * Integer -> String 
+	 */
+	@Test
+	public void typeChangeIntegerString() {
+		IColumn testcol, adjcol;
+		String testval = "24";
+		
+		testcol = makeColumn(testval);
+		assertTrue(testcol.getType().getTypeName().equals(Integer.class.getTypeName()));
+		assertEquals(24, testcol.getPrecision());
+		
+		adjcol = adjustColumn(testcol, "Xxx-x:Y");
+		assertTrue(adjcol.getType().getTypeName().equals(String.class.getTypeName()));
+		assertEquals(10, adjcol.getPrecision());
+	}
+	
+	/**
+	 * Double -> Integer
+	 * This should not be possible, to narrow the scale
+	 * of a column
+	 */
 	@Test
 	public void typeChangeDoubleInteger() {
 		IColumn testcol, adjcol;
 		String testval;
 
-		/**
-		 * Double -> Integer
-		 * This should not be possible, to narrow the scale
-		 * of a column
-		 */
 		testval = "461.89";
 		testcol = makeColumn(testval);
 		assertTrue(testcol.getType().getTypeName().equals(Double.class.getTypeName()));

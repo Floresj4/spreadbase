@@ -11,4 +11,12 @@ public class DataType {
 		this.precision = precision;
 		this.scale = scale;
 	}
+	
+	public int getPrecision() {	return precision; }
+	public int getScale() { return scale; }
+	public Class<?> getType() { return type; }
+	
+	public String toString() {
+		return String.format("%s %d %s", type, precision, scale);
+	}
 }

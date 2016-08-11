@@ -78,10 +78,9 @@ public class Column implements IColumn {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Column { name: ").append(name).append(BuilderUtil.NEW_LINE);
 
+		//show all types encountered
 		typeMap.forEach((c, d) -> {
-			builder.append("\t type: ").append(d.type).append(BuilderUtil.NEW_LINE)
-			.append("\tprecision: ").append(d.precision).append(BuilderUtil.NEW_LINE)
-			.append("\tscale: ").append(d.scale).append(BuilderUtil.NEW_LINE);
+			builder.append(d);
 		});
 
 		return builder.append("}").toString();

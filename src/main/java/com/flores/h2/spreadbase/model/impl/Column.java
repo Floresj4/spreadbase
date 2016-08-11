@@ -62,6 +62,15 @@ public class Column implements IColumn {
 	}
 
 	@Override
+	public Map<Class<?>, DataType> getTypeMap() {
+		return typeMap;
+	}
+
+	public void put(DataType t) {
+		typeMap.put(t.getClass(), t);
+	}
+
+	@Override
 	public void setDescription(String desc) {
 		this.description = desc;
 	}
@@ -70,7 +79,7 @@ public class Column implements IColumn {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
 	/**
 	 * TODO: add JAXB annotations
 	 */
@@ -84,10 +93,5 @@ public class Column implements IColumn {
 		});
 
 		return builder.append("}").toString();
-	}
-
-	@Override
-	public Map<Class<?>, DataType> getTypeMap() {
-		return typeMap;
 	}
 }

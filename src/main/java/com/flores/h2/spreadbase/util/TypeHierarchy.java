@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.flores.h2.spreadbase.exception.UnsupportedTypeException;
+import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.impl.DataType;
 
 /**
@@ -18,6 +19,10 @@ public final class TypeHierarchy extends HashMap<Class<?>, Integer> {
 		put(Integer.class, 3);
 	}
 	
+	public DataType getPriorityDataType(IColumn column) throws UnsupportedTypeException {
+		return getPriorityDataType(column.getTypeMap());
+	}
+
 	public DataType getPriorityDataType(final Map<Class<?>, DataType> encounteredTypes) throws UnsupportedTypeException {
 		if(encounteredTypes == null)
 			throw new NullPointerException("map<class,datatype> argument");

@@ -9,6 +9,11 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.flores.h2.spreadbase.exception.UnsupportedTypeException;
+import com.flores.h2.spreadbase.model.DataDefinition;
 import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.ITable;
 import com.flores.h2.spreadbase.model.h2.DataTypeFactory;
@@ -25,13 +30,20 @@ public class TableDefinitionWriter implements Closeable {
 
 	//tab, name, definition, newline
 	private static final String COLUMN_LINE = "\t%s %s,%n";
+	
+	//TODO make this configurable
+	@SuppressWarnings("unused")
 	private static final String TABLE_END = ");%n%n";
 	private static final String COMMENT = "-- %s%n";
 
 	//terminate table and start select
 	private static final String CSV_READ_LINE = ") as select * from csvread('%s');%n%n";
 
-	public TableDefinitionWriter(File outputFile) throws IOException {
+	private DataTypeFactory typeFactory;
+	
+	private static final Logger logger = LoggerFactory.getLogger(TableDefinitionWriter.class);
+
+	public TableDefinitionWriter(File outputFile, DataTypeFactory typeFactory) throws IOException {
 		writer = new BufferedWriter(new FileWriter(outputFile));
 	}
 
@@ -52,8 +64,16 @@ public class TableDefinitionWriter implements Closeable {
 		
 		for(Entry<String, IColumn> e : table.entrySet()) {
 			IColumn c = e.getValue();
+			
+			DataDefinition definition;
+			try { definition = typeFactory.createDataDefinition(c); }
+			catch(UnsupportedTypeException u) {
+				logger.error(u.getMessage());
+				definition = new ErrorDefinition(c);
+			}
+			
 			writer.write(String.format(COLUMN_LINE, c.getName()
-				, DataTypeFactory.createDataDefinition(c).getDefinition()));
+				, definition.getDefinition()));
 		}
 
 		//terminate the table definition
@@ -79,5 +99,18 @@ public class TableDefinitionWriter implements Closeable {
 	@Override
 	public void close() throws IOException {
 		writer.close();
+	}
+	
+	private class ErrorDefinition extends DataDefinition {
+
+		public ErrorDefinition(IColumn column) {
+			super(column, null);
+		}
+
+		@Override
+		public String getDefinition() {
+			return String.format("//error creating {}", column.getName());
+		}
+		
 	}
 }

@@ -2,6 +2,7 @@ package com.flores.h2.spreadbase.model.h2;
 
 import com.flores.h2.spreadbase.model.DataDefinition;
 import com.flores.h2.spreadbase.model.IColumn;
+import com.flores.h2.spreadbase.model.impl.DataType;
 
 /**
  * 
@@ -11,12 +12,12 @@ public class Varchar extends DataDefinition {
 
 	private static final String DEFINITION = "varchar(%d)";
 	
-	public Varchar(IColumn column) {
-		super(column);
+	public Varchar(IColumn column, DataType priority) {
+		super(column, priority);
 	}
 
 	@Override
 	public String getDefinition() {
-		return String.format(DEFINITION, column.getPrecision());
+		return String.format(DEFINITION, priority.getPrecision());
 	}
 }

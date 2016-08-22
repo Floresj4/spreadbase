@@ -21,6 +21,7 @@ import com.flores.h2.spreadbase.model.ITable;
 import com.flores.h2.spreadbase.model.impl.DataType;
 import com.flores.h2.spreadbase.model.impl.Table;
 import com.flores.h2.spreadbase.util.BuilderUtil;
+import com.flores.h2.spreadbase.util.TypeHierarchy;
 
 /**
  * 
@@ -29,12 +30,16 @@ import com.flores.h2.spreadbase.util.BuilderUtil;
 public class WorkbookAnalyzer {
 
 	public static final int UNSET_INT = Integer.MIN_VALUE;
+	
 	private static final String CREATED_FROM = "created from %s:%s";
+	
 	public static final String EMPTY_CELL_DATA = "";
+	
+	private static String currentFilename;
 	
 	private static final Logger logger = LoggerFactory.getLogger(WorkbookAnalyzer.class);
 
-	private static String currentFilename;
+	private static final TypeHierarchy hr = new TypeHierarchy();
 
 	/**
 	 * 
@@ -265,8 +270,12 @@ public class WorkbookAnalyzer {
 		int scale = _new.getScale() >= _curr.getScale()
 				? _new.getScale() : _curr.getScale();
 
-				
-		return new DataType(_curr.getClass(), precision, scale);
+		//rank indices
+		int idx = hr.get(_new.getType()) <= hr.get(_curr.getType()) 
+				? hr.get(_new.getType()) 
+				: hr.get(_curr.getType());
+
+		return new DataType(hr.classByIndex(idx), precision, scale);
 	}
 	
 	private static void setCurrentFilename(Sheet sheet) {

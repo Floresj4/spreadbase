@@ -14,9 +14,20 @@ import com.flores.h2.spreadbase.model.impl.DataType;
  */
 public final class TypeHierarchy extends HashMap<Class<?>, Integer> {
 	private static final long serialVersionUID = 6130019034991343452L; {
-		put(String.class, 1);
-		put(Double.class, 2);
-		put(Integer.class, 3);
+		super.put(String.class, 1);
+		super.put(Double.class, 2);
+		super.put(Integer.class, 3);
+	}
+
+	public Class<?> classByIndex(int index) {
+		Class<?>c = null;
+		for(Entry<Class<?>, Integer> e : entrySet())
+			if(e.getValue() == index) c = e.getKey();
+		return c;
+	}
+	
+	public Integer put(Class<?>c, Integer i) {
+		throw new RuntimeException("Put is not support on the hierarchy");
 	}
 	
 	public DataType getPriorityDataType(IColumn column) throws UnsupportedTypeException {

@@ -17,6 +17,9 @@ import com.flores.h2.spreadbase.util.BuilderUtil;
  */
 public class TestDataTypeRules {
 
+	/**
+	 * Simple, up-front, creation testing...
+	 */
 	@Test
 	public void testDataTypeCreation() {
 		//create String
@@ -43,16 +46,13 @@ public class TestDataTypeRules {
 
 	@Test
 	public void testResizeString() {
-		String testval = "xxxxx";	//precision should be adjusted
-		DataType testDt = makeDataType(testval);
-		assertEquals(5, testDt.getPrecision());
-		assertEquals(10, mergeDataType(testDt, makeDataType("yyyyyyyyyy"))
+		//precision should be adjusted
+		DataType testDt = makeDataType("xxxxx");
+		assertEquals(10, (testDt = mergeDataType(testDt, "yyyyyyyyyy"))
 				.getPrecision());
-		
-		testval = "xxx";	//precision should not be adjusted
-		testDt = makeDataType(testval);
-		assertEquals(3, testDt.getPrecision());
-		assertEquals(3, mergeDataType(testDt, makeDataType("y"))
+
+		//precision should not be adjusted
+		assertEquals(10, mergeDataType(testDt, makeDataType("y"))
 				.getPrecision());
 	}
 	
@@ -115,16 +115,15 @@ public class TestDataTypeRules {
 	 */
 	@Test
 	public void typeChangeIntegerString() {
-		DataType testDt, adjcol;
+		DataType testDt;
 		
 		testDt = makeDataType("24");
 		assertTrue(testDt.getTypeName().equals(Integer.class.getTypeName()));
-		assertEquals(24, testDt.getPrecision());
-		
-		adjcol = mergeDataType(testDt, "Xxx-x:Y");
-		assertTrue(adjcol.getTypeName().equals(String.class.getTypeName()));
-		assertEquals(10, adjcol.getPrecision());
+		assertTrue(mergeDataType(testDt, "Xxx-x:Y").getTypeName().equals(
+				String.class.getTypeName()));
 	}
+
+	//TODO write tests for changes in scale or precision
 	
 	/**
 	 * Double -> Integer
@@ -133,12 +132,12 @@ public class TestDataTypeRules {
 	 */
 	@Test
 	public void typeChangeDoubleInteger() {
-		DataType testDt, adjcol;
+		DataType testDt = null;
 
-		testDt = makeDataType("461.89");
-		assertTrue(testDt.getTypeName().equals(Double.class.getTypeName()));
+		assertTrue((testDt = makeDataType("461.89")).getTypeName()
+				.equals(Double.class.getTypeName()));
 
-		adjcol = mergeDataType(testDt, "6");
-		assertTrue(adjcol.getTypeName().equals(Double.class.getTypeName()));
+		assertTrue(mergeDataType(testDt, "6").getTypeName()
+				.equals(Double.class.getTypeName()));
 	}
 }

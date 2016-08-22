@@ -21,7 +21,6 @@ import com.flores.h2.spreadbase.model.ITable;
 import com.flores.h2.spreadbase.model.impl.DataType;
 import com.flores.h2.spreadbase.model.impl.Table;
 import com.flores.h2.spreadbase.util.BuilderUtil;
-import com.flores.h2.spreadbase.util.TypeHierarchy;
 
 /**
  * 
@@ -234,6 +233,16 @@ public class WorkbookAnalyzer {
 		}
 
 		return new DataType(type, precision, scale);
+	}
+
+	/**
+	 * Merge directly from an incoming value
+	 * @param _new
+	 * @param dataValue
+	 * @return
+	 */
+	public static DataType mergeDataType(DataType _new, String dataValue) {
+		return mergeDataType(_new, makeDataType(dataValue));
 	}
 
 	/**

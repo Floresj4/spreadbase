@@ -1,93 +1,92 @@
 package com.flores.h2.spreadbase;
 
-import static org.junit.Assert.*;
-import static com.flores.h2.spreadbase.analyze.WorkbookAnalyzer.*;
+import static com.flores.h2.spreadbase.analyze.WorkbookAnalyzer.makeDataType;
+import static com.flores.h2.spreadbase.analyze.WorkbookAnalyzer.mergeDataType;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.flores.h2.spreadbase.model.IColumn;
+import com.flores.h2.spreadbase.model.impl.DataType;
 import com.flores.h2.spreadbase.util.BuilderUtil;
 
 /**
  * 
  * @author Jason
  */
-public class TestColumnRules {
+public class TestDataTypeRules {
 
 	@Test
-	public void testColumnCreation() {
+	public void testDataTypeCreation() {
 		//create String
-		IColumn testcol = makeColumn("xxxxx");
-		assertNotNull(testcol);
-		assertTrue(testcol.getType().getTypeName().equals(String.class.getTypeName()));
-		assertEquals(5, testcol.getPrecision());
-		assertEquals(BuilderUtil.UNSET_INT, testcol.getScale());
+		DataType testDt = makeDataType("xxxxx");
+		assertNotNull(testDt);
+		assertTrue(testDt.getTypeName().equals(String.class.getTypeName()));
+		assertEquals(5, testDt.getPrecision());
+		assertEquals(BuilderUtil.UNSET_INT, testDt.getScale());
 		
 		//create Double
-		testcol = makeColumn("1000.23");
-		assertNotNull(testcol);
-		assertTrue(testcol.getType().getTypeName().equals(Double.class.getTypeName()));
-		assertEquals(1000, testcol.getPrecision());
-		assertEquals(23, testcol.getScale());
+		testDt = makeDataType("1000.23");
+		assertNotNull(testDt);
+		assertTrue(testDt.getTypeName().equals(Double.class.getTypeName()));
+		assertEquals(1000, testDt.getPrecision());
+		assertEquals(23, testDt.getScale());
 		
 		//create Integer
-		testcol = makeColumn("1000");
-		assertNotNull(testcol);
-		assertTrue(testcol.getType().getTypeName().equals(Integer.class.getTypeName()));
-		assertEquals(1000, testcol.getPrecision());
-		assertEquals(BuilderUtil.UNSET_INT, testcol.getScale());
+		testDt = makeDataType("1000");
+		assertNotNull(testDt);
+		assertTrue(testDt.getTypeName().equals(Integer.class.getTypeName()));
+		assertEquals(1000, testDt.getPrecision());
+		assertEquals(BuilderUtil.UNSET_INT, testDt.getScale());
 	}
 
 	@Test
 	public void testResizeString() {
 		String testval = "xxxxx";	//precision should be adjusted
-		IColumn testcol = makeColumn(testval);
-		assertEquals(5, testcol.getPrecision());
-		assertEquals(10, adjustColumn(
-				testcol, "yyyyyyyyyy").getPrecision());
+		DataType testDt = makeDataType(testval);
+		assertEquals(5, testDt.getPrecision());
+		assertEquals(10, mergeDataType(testDt, makeDataType("yyyyyyyyyy"))
+				.getPrecision());
 		
 		testval = "xxx";	//precision should not be adjusted
-		testcol = makeColumn(testval);
-		assertEquals(3, testcol.getPrecision());
-		assertEquals(3, adjustColumn(
-				testcol, "y").getPrecision());
+		testDt = makeDataType(testval);
+		assertEquals(3, testDt.getPrecision());
+		assertEquals(3, mergeDataType(testDt, makeDataType("y"))
+				.getPrecision());
 	}
 	
 	@Test
 	public void testNumberResize() {
 		//the precision should be adjusted
-		String testval = "10";
-		IColumn testcol = makeColumn(testval);
-		IColumn adjcol = null;
+		DataType testDt = makeDataType("10");
+		DataType adjcol = null;
 
-		assertEquals(10, testcol.getPrecision());
-		assertEquals(100, adjustColumn(
-				testcol, "100").getPrecision());
+		assertEquals(10, testDt.getPrecision());
+		assertEquals(100, mergeDataType(testDt, makeDataType("100"))
+				.getPrecision());
 
 		//precision should not be adjusted
-		testval = "125";	
-		testcol = makeColumn(testval);
-		assertEquals(125, testcol.getPrecision());
-		assertEquals(125, adjustColumn(testcol, "120")
+		testDt = makeDataType("125");
+		assertEquals(125, mergeDataType(testDt, "120")
 				.getPrecision());
 
 		//precision should be adjusted
-		testval = "58.27";
-		testcol = makeColumn(testval);
-		assertEquals(58, testcol.getPrecision());
-		assertEquals(27, testcol.getScale());
+		testDt = makeDataType("58.27");
+		assertEquals(58, testDt.getPrecision());
+		assertEquals(27, testDt.getScale());
 
-		adjcol = adjustColumn(testcol, "262.333");
+		adjcol = mergeDataType(testDt, "262.333");
 		assertEquals(262, adjcol.getPrecision());
 		assertEquals(333, adjcol.getScale());
 
 		//scale or precision should not change
-		adjcol = adjustColumn(adjcol, "1.1");
+		adjcol = mergeDataType(adjcol, "1.1");
 		assertEquals(262, adjcol.getPrecision());
 		assertEquals(333, adjcol.getScale());
 
 		//only one attribute changes
-		adjcol = adjustColumn(adjcol, "224565.22");
+		adjcol = mergeDataType(adjcol, "224565.22");
 		assertEquals(224565, adjcol.getPrecision());
 		assertEquals(333, adjcol.getScale());
 	}
@@ -97,18 +96,16 @@ public class TestColumnRules {
 	 */
 	@Test
 	public void typeChangeIntegerDouble() {
-		IColumn testcol, adjcol;
-		String testval;
+		DataType testDt, adjcol;
 
-		testval = "1";
-		testcol = makeColumn(testval);
-		assertTrue(testcol.getType().getTypeName().equals(Integer.class.getTypeName()));
-		assertEquals(1, testcol.getPrecision());
-		assertEquals(BuilderUtil.UNSET_INT, testcol.getScale());
+		testDt = makeDataType("1");
+		assertTrue(testDt.getTypeName().equals(Integer.class.getTypeName()));
+		assertEquals(1, testDt.getPrecision());
+		assertEquals(BuilderUtil.UNSET_INT, testDt.getScale());
 		
 		//type should change along with precision and scale
-		adjcol = adjustColumn(testcol, "22.2");
-		assertTrue(adjcol.getType().getTypeName().equals(Double.class.getTypeName()));
+		adjcol = mergeDataType(testDt, "22.2");
+		assertTrue(adjcol.getTypeName().equals(Double.class.getTypeName()));
 		assertEquals(22, adjcol.getPrecision());
 		assertEquals(2, adjcol.getScale());
 	}
@@ -118,37 +115,30 @@ public class TestColumnRules {
 	 */
 	@Test
 	public void typeChangeIntegerString() {
-		IColumn testcol, adjcol;
-		String testval = "24";
+		DataType testDt, adjcol;
 		
-		testcol = makeColumn(testval);
-		assertTrue(testcol.getType().getTypeName().equals(Integer.class.getTypeName()));
-		assertEquals(24, testcol.getPrecision());
+		testDt = makeDataType("24");
+		assertTrue(testDt.getTypeName().equals(Integer.class.getTypeName()));
+		assertEquals(24, testDt.getPrecision());
 		
-		adjcol = adjustColumn(testcol, "Xxx-x:Y");
-		assertTrue(adjcol.getType().getTypeName().equals(String.class.getTypeName()));
+		adjcol = mergeDataType(testDt, "Xxx-x:Y");
+		assertTrue(adjcol.getTypeName().equals(String.class.getTypeName()));
 		assertEquals(10, adjcol.getPrecision());
 	}
 	
 	/**
 	 * Double -> Integer
 	 * This should not be possible, to narrow the scale
-	 * of a column
+	 * of a DataType
 	 */
 	@Test
 	public void typeChangeDoubleInteger() {
-		IColumn testcol, adjcol;
-		String testval;
+		DataType testDt, adjcol;
 
-		testval = "461.89";
-		testcol = makeColumn(testval);
-		assertTrue(testcol.getType().getTypeName().equals(Double.class.getTypeName()));
-		assertEquals(461, testcol.getPrecision());
-		assertEquals(89, testcol.getScale());
+		testDt = makeDataType("461.89");
+		assertTrue(testDt.getTypeName().equals(Double.class.getTypeName()));
 
-		adjcol = adjustColumn(testcol, "6");
-		assertTrue(adjcol.getType().getTypeName().equals(Double.class.getTypeName()));
-		assertEquals(461, adjcol.getPrecision());
-		assertEquals(89, adjcol.getScale());
+		adjcol = mergeDataType(testDt, "6");
+		assertTrue(adjcol.getTypeName().equals(Double.class.getTypeName()));
 	}
 }

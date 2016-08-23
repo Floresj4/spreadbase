@@ -25,32 +25,22 @@ public class Table implements ITable {
 
 	private File fromFile;
 	
-	protected Map<String, IColumn> columns;
+	protected Map<String, IColumn> columns = new LinkedHashMap<>();
 
 	public Table(String name) {
 		this(name, null);
 	}
 
-	public Table(String name, String description) {
-		this(name, description, new String[0]);
+	public Table(String name, File fromFile) {
+		this(name, fromFile, null);
 	}
 
-	public Table(String name, String description, String columns[]) {
-		this(name, description, columns, null);
+	public Table(String name, File fromFile, Map<String, IColumn>columns) {
+		this.name = name;
+		this.fromFile = fromFile;
+		this.columns = columns;
 	}
 	
-	public Table(String name, String description, String columns[], File fromFile) {
-		this.name = name;
-		this.description = description;
-		this.columns = new LinkedHashMap<>();
-		
-		if(columns != null)
-			for(String c : columns)	
-				this.columns.put(c, new Column(c));
-		
-		this.fromFile = fromFile;
-	}
-
 	@Override
 	public void clear() {
 		columns.clear();
@@ -115,6 +105,10 @@ public class Table implements ITable {
 	@Override
 	public Set<String> keySet() {
 		return columns.keySet();
+	}
+
+	public IColumn put(IColumn c) {
+		return columns.put(c.getName(), c);
 	}
 
 	@Override

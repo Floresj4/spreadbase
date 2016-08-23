@@ -25,28 +25,21 @@ public class Column implements IColumn {
 	protected Map<Class<?>, DataType> typeMap;
 
 	public Column(DataType type) {
-		this(null, null, type);
+		this(null, type);
 	}
 
 	public Column(IColumn c) {
-		this(c.getName()
-			, c.getDescription());
+		this(c.getName());
 
 		this.typeMap = c.getTypeMap();
 	}
 
 	public Column(String name) {
-		this(name, null, new DataType(String.class, 0, BuilderUtil.UNSET_INT));
+		this(name, new DataType(String.class, 0, BuilderUtil.UNSET_INT));
 	}
 
-	public Column(String name, String description) {
-		this(name, description, new DataType(String.class, 0, BuilderUtil.UNSET_INT));
-	}
-
-	public Column(String name, String description, DataType dt) {
+	public Column(String name, DataType dt) {
 		this.name = name;
-		this.description = description;
-
 		typeMap = new HashMap<>();
 		typeMap.put(dt.type, dt);
 	}

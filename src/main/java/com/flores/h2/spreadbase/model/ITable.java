@@ -10,6 +10,7 @@ import java.util.Map;
 public interface ITable extends Map<String, IColumn>, IDescribable {
 	public String getName();
 	public String getDescription();
+	public void setDescription(String description);
 	public void setFromFile(File f);
 	public File getFromFile();
 }

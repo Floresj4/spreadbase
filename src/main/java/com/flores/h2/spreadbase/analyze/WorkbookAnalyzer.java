@@ -3,8 +3,10 @@ package com.flores.h2.spreadbase.analyze;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -18,6 +20,7 @@ import org.supercsv.prefs.CsvPreference;
 
 import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.ITable;
+import com.flores.h2.spreadbase.model.impl.Column;
 import com.flores.h2.spreadbase.model.impl.DataType;
 import com.flores.h2.spreadbase.model.impl.Table;
 import com.flores.h2.spreadbase.util.BuilderUtil;
@@ -34,9 +37,7 @@ public class WorkbookAnalyzer {
 	private static final String CREATED_FROM = "created from %s:%s";
 	
 	public static final String EMPTY_CELL_DATA = "";
-	
-	private static String currentFilename;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(WorkbookAnalyzer.class);
 
 	private static final TypeHierarchy hr = new TypeHierarchy();
@@ -65,12 +66,14 @@ public class WorkbookAnalyzer {
 				continue;
 
 			//create the output filename
-			setCurrentFilename(sheet);
+			String currentFilename = BuilderUtil.sheetNameToFilename(sheet);
+			logger.debug("Extracting {}", sheet.getSheetName());
 
 			//write the current sheet to a file as well
 			try(CsvListWriter w = getListWriter(fin, currentFilename)) {
 				//initialize the table
-				ITable table = initializeTable(sheet, fin, firstRow);
+				ITable table = initializeTable(sheet, fin);
+				table.putAll(createColumns(firstRow));
 
 				List<Object>data = null;
 				for(int x = 1; x < sheet.getLastRowNum(); x++) {
@@ -110,39 +113,15 @@ public class WorkbookAnalyzer {
 		
 		return tables;
 	}
-	
+	/**
+	 * @param sheet
+	 * @return the first row if true
+	 */
 	private static Row containsRowData(Sheet sheet) {
 		Row firstRow = sheet.getRow(0);
 		if(firstRow == null)
 			return firstRow;
 		return null;
-	}
-
-	/**
-	 * Columns are considered valid if they are <em>not</em> empty
-	 * or null.
-	 * @param firstRow of the current sheet
-	 * @return a non-null list of column names
-	 */
-	private static List<String> getColumnNames(Row firstRow) {
-		List<String> columnNames = new LinkedList<>();
-		int totalColumns = firstRow.getLastCellNum();
-		for(int x = 0; x < totalColumns; x++) {
-			if(firstRow.getCell(x) != null) {
-				String name = getStringValue(firstRow.getCell(x));
-				
-				//if not empty
-				if(name.trim().isEmpty())
-					continue;
-				
-				//correct and add the name
-				columnNames.add(name
-						.replaceAll(" ", "_")	//blank spaces are invalid
-						.replaceAll("-", "_"));	//dashes are also invalid
-			}
-		}
-
-		return columnNames;
 	}
 
 	private static CsvListWriter getListWriter(File fin, String currentFilename) throws IOException {
@@ -183,13 +162,11 @@ public class WorkbookAnalyzer {
 				: sValue;
 	}
 
-	private static ITable initializeTable(Sheet sheet, File fin, Row firstRow) {
-		List<String>columnNames = getColumnNames(firstRow);
-		
-		return new Table(sheet.getSheetName(), 
-				String.format(CREATED_FROM, fin.getAbsolutePath(), sheet.getSheetName()),
-					columnNames.toArray(new String[columnNames.size()])
-					, fin);
+	private static ITable initializeTable(Sheet sheet, File fin) {
+		String description = String.format(CREATED_FROM, fin.getAbsolutePath(), sheet.getSheetName());
+		ITable t = new Table(sheet.getSheetName(), fin);
+		t.setDescription(description);
+		return t;
 	}
 
 	private static boolean isFiltered(Sheet sheet, List<String> filter) {
@@ -198,6 +175,15 @@ public class WorkbookAnalyzer {
 			return true;
 		}
 		return false;
+	}
+
+	private static Map<String, IColumn> createColumns(Row firstrow) {
+		Map<String, IColumn>c = new HashMap<>();
+		firstrow.forEach(r -> {
+			String name = getStringValue(r);
+			c.put(name, new Column(name));
+		});
+		return c;
 	}
 
 	/**
@@ -276,10 +262,5 @@ public class WorkbookAnalyzer {
 				: hr.get(_curr.getType());
 
 		return new DataType(hr.classByIndex(idx), precision, scale);
-	}
-	
-	private static void setCurrentFilename(Sheet sheet) {
-		currentFilename = BuilderUtil.sheetNameToFilename(sheet);
-		logger.debug("Extracting {} as {}", sheet.getSheetName(), currentFilename);
 	}
 }

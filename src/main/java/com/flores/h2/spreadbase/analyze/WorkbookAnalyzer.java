@@ -71,7 +71,7 @@ public class WorkbookAnalyzer {
 
 			//write the current sheet to a file as well
 			try(CsvListWriter w = getListWriter(fin, currentFilename)) {
-				//initialize the table
+				//initialize the table and add columns
 				ITable table = initializeTable(sheet, fin);
 				table.putAll(createColumns(firstRow));
 
@@ -91,12 +91,14 @@ public class WorkbookAnalyzer {
 							DataType _curr = column.getTypeMap().get(_new.getClass());
 							DataType finaltype = mergeDataType(_new, _curr);
 							column.put(finaltype);
-							
+
 							data.add(value);
-						} catch(Exception e) {
+						}
+						catch(Exception e) {
 							//these errors are common enough to only debug log them
-							logger.debug("obtaining the {} value of cell {}:{}", currentFilename
-									, BuilderUtil.columnNumberToExcelColumnName(x), y);
+							logger.debug("error at cell {}:{}", BuilderUtil
+									.columnNumberToExcelColumnName(x), y);
+
 							//add empty cell data
 							data.add(EMPTY_CELL_DATA);
 						}

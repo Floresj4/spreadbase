@@ -10,13 +10,13 @@ import com.flores.h2.spreadbase.model.impl.DataType;
 import com.flores.h2.spreadbase.util.BuilderUtil;
 
 /**
- * 
+ * Utility class for creating H2 definitions
  * @author Jason Flores
  */
 public class DataDefinitionFactory {
 	private static final Logger logger = LoggerFactory.getLogger(DataDefinitionFactory.class);
 	
-	public DataDefinition createDataDefinition(IColumn column) throws UnsupportedTypeException {
+	public static DataDefinition createDataDefinition(IColumn column) throws UnsupportedTypeException {
 		logger.debug("creating definition for {}, column");
 
 		DataType dt =  column.getDataType();

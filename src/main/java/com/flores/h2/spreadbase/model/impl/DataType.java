@@ -20,6 +20,8 @@ public class DataType {
 	
 	public String getTypeName() { return type.getName(); }
 	
+	public String getSimpleTypeName() { return type.getSimpleName(); }
+
 	public String toString() {
 		return String.format("%s %d %s", type, precision, scale);
 	}

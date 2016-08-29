@@ -25,24 +25,25 @@ public class DataTypeFactory extends AbstractRankingFactory {
 	
 	public DataDefinition createDataDefinition(IColumn column) throws UnsupportedTypeException {
 		logger.debug("creating definition for {}, column");
-		DataType priority = hierarchy.getPriorityDataType(column.getTypeMap());
-		
+
+		DataType dt =  column.getDataType();
 		DataDefinition definition = null;
-		switch(priority.getType().getSimpleName()) {
+
+		switch(dt.getSimpleTypeName()) {
 			case "String":
-				definition = new NVarchar(column, priority);
+				definition = new NVarchar(column, dt);
 				break;
 
 			default:
 
 				//only handling integers and doubles at the moment
-				if(!priority.getType().equals(Integer.class) && !column.getTypeMap().equals(Double.class))
+				if(!dt.getType().equals(Integer.class) && !dt.getType().equals(Double.class))
 					throw new UnsupportedTypeException("The type " + 
-							priority.getType().getSimpleName() + " is not a supported number class");
+							dt.getType().getSimpleName() + " is not a supported number class");
 
-				return (priority.getScale() == BuilderUtil.UNSET_INT)
-					? asNaturalNumber(column, priority)
-							: asRationalNumber(column, priority);
+				return (dt.getScale() == BuilderUtil.UNSET_INT)
+					? asNaturalNumber(column, dt)
+							: asRationalNumber(column, dt);
 				
 		}
 
@@ -56,7 +57,6 @@ public class DataTypeFactory extends AbstractRankingFactory {
 	 * @return a valid numeric data type
 	 */
 	private static DataDefinition asNaturalNumber(IColumn column, DataType priority) {
-
 		if (TinyInt.inRange(priority.getPrecision())) 
 			return new TinyInt(column, priority); 
 		 

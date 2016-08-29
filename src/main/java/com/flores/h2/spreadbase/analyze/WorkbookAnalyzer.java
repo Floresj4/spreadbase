@@ -84,10 +84,10 @@ public class WorkbookAnalyzer {
 							String value = getStringValue(row.getCell(y));
 
 							//for DDL handling
-							DataType _new = DataTypeFactory.makeDataType(value);
-							DataType _curr = column.getTypeMap().get(_new.getClass());
-							DataType finaltype = DataTypeFactory.mergeDataType(_new, _curr);
-							column.put(finaltype);
+							DataType finaltype = DataTypeFactory.mergeDataType(
+									DataTypeFactory.makeDataType(value),
+									column.getDataType());
+							column.setDataType(finaltype);
 
 							data.add(value);
 						}

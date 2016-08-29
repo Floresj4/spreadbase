@@ -9,6 +9,9 @@ import com.flores.h2.spreadbase.util.TypeHierarchy;
  * @author Jason
  */
 public class DataTypeFactory {
+	/**
+	 * current type hierarchy impl.
+	 */
 	private static final TypeHierarchy hr = new TypeHierarchy();
 
 	/**

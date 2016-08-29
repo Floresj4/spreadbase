@@ -4,24 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.flores.h2.spreadbase.exception.UnsupportedTypeException;
-import com.flores.h2.spreadbase.model.AbstractRankingFactory;
 import com.flores.h2.spreadbase.model.DataDefinition;
 import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.impl.DataType;
 import com.flores.h2.spreadbase.util.BuilderUtil;
-import com.flores.h2.spreadbase.util.TypeHierarchy;
 
 /**
  * 
  * @author Jason Flores
  */
-public class DataTypeFactory extends AbstractRankingFactory {
-	
-	public DataTypeFactory(TypeHierarchy hierarchy) {
-		super(hierarchy);
-	}
-
-	private static final Logger logger = LoggerFactory.getLogger(DataTypeFactory.class);
+public class DataDefinitionFactory {
+	private static final Logger logger = LoggerFactory.getLogger(DataDefinitionFactory.class);
 	
 	public DataDefinition createDataDefinition(IColumn column) throws UnsupportedTypeException {
 		logger.debug("creating definition for {}, column");

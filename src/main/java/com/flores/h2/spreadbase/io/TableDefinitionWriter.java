@@ -16,7 +16,7 @@ import com.flores.h2.spreadbase.exception.UnsupportedTypeException;
 import com.flores.h2.spreadbase.model.DataDefinition;
 import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.ITable;
-import com.flores.h2.spreadbase.model.h2.DataTypeFactory;
+import com.flores.h2.spreadbase.model.h2.DataDefinitionFactory;
 
 public class TableDefinitionWriter implements Closeable {
 	
@@ -39,11 +39,11 @@ public class TableDefinitionWriter implements Closeable {
 	//terminate table and start select
 	private static final String CSV_READ_LINE = ") as select * from csvread('%s');%n%n";
 
-	private DataTypeFactory typeFactory;
+	private DataDefinitionFactory typeFactory;
 	
 	private static final Logger logger = LoggerFactory.getLogger(TableDefinitionWriter.class);
 
-	public TableDefinitionWriter(File outputFile, DataTypeFactory typeFactory) throws IOException {
+	public TableDefinitionWriter(File outputFile, DataDefinitionFactory typeFactory) throws IOException {
 		writer = new BufferedWriter(new FileWriter(outputFile));
 	}
 

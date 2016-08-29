@@ -24,7 +24,6 @@ import com.flores.h2.spreadbase.model.impl.Column;
 import com.flores.h2.spreadbase.model.impl.DataType;
 import com.flores.h2.spreadbase.model.impl.Table;
 import com.flores.h2.spreadbase.util.BuilderUtil;
-import com.flores.h2.spreadbase.util.TypeHierarchy;
 
 /**
  * 
@@ -39,8 +38,6 @@ public class WorkbookAnalyzer {
 	public static final String EMPTY_CELL_DATA = "";
 
 	private static final Logger logger = LoggerFactory.getLogger(WorkbookAnalyzer.class);
-
-	private static final TypeHierarchy hr = new TypeHierarchy();
 
 	/**
 	 * 
@@ -87,9 +84,9 @@ public class WorkbookAnalyzer {
 							String value = getStringValue(row.getCell(y));
 
 							//for DDL handling
-							DataType _new = makeDataType(value);
+							DataType _new = DataTypeFactory.makeDataType(value);
 							DataType _curr = column.getTypeMap().get(_new.getClass());
-							DataType finaltype = mergeDataType(_new, _curr);
+							DataType finaltype = DataTypeFactory.mergeDataType(_new, _curr);
 							column.put(finaltype);
 
 							data.add(value);
@@ -186,83 +183,5 @@ public class WorkbookAnalyzer {
 			c.put(name, new Column(name));
 		});
 		return c;
-	}
-
-	/**
-	 * Make a DataType!  Infer type, scale, and precision based on
-	 * the {@code dataValue} param.  Default to a string type
-	 * @param dataValue to create
-	 * @return a non-null DataType
-	 */
-	public static DataType makeDataType(String dataValue) {
-		Class<?> type = null;
-		int precision = BuilderUtil.UNSET_INT;
-		int scale = BuilderUtil.UNSET_INT;
-
-		try {	//determine type
-			Double d = Double.parseDouble(dataValue);
-
-				//parse for precision and scale
-			String temp[] = d.toString().split("\\.");
-			boolean hasScale = d != Math.floor(d);
-			if(hasScale) {
-				precision = Integer.parseInt(temp[0]);
-				scale = Integer.parseInt(temp[1]);
-			} else { //use the actual data value
-				precision = Integer.parseInt(dataValue);
-			}
-
-			type = hasScale ? Double.class : Integer.class;
-		}
-		catch(NumberFormatException nfe) {
-			//default to string
-			type = String.class;
-			precision = dataValue.length();
-		}
-		catch(NullPointerException npe) {
-			//if dataValue is null, default string
-			type = String.class;
-			//leave precision and scale unset
-		}
-
-		return new DataType(type, precision, scale);
-	}
-
-	/**
-	 * Merge directly from an incoming value
-	 * @param _new
-	 * @param dataValue
-	 * @return
-	 */
-	public static DataType mergeDataType(DataType _new, String dataValue) {
-		return mergeDataType(_new, makeDataType(dataValue));
-	}
-
-	/**
-	 * These values should never be null by design of {@link #makeDataType(String)}
-	 * Type isn't tested because of the string default strategy in 
-	 * {@code #makeDataType(String)}. 
-	 * 
-	 * @param _new the most recently created from a data cell.
-	 * @param _curr the currently existing, if the type has been encountered
-	 * already, otherwise pass in null
-	 * @return a non-null datatype
-	 */
-	public static DataType mergeDataType(DataType _new, DataType _curr) {
-		if(_curr == null)
-			return _new;
-
-		int precision = _new.getPrecision() >= _curr.getPrecision()
-				? _new.getPrecision() : _curr.getPrecision();
-		
-		int scale = _new.getScale() >= _curr.getScale()
-				? _new.getScale() : _curr.getScale();
-
-		//rank indices
-		int idx = hr.get(_new.getType()) <= hr.get(_curr.getType()) 
-				? hr.get(_new.getType()) 
-				: hr.get(_curr.getType());
-
-		return new DataType(hr.classByIndex(idx), precision, scale);
 	}
 }

@@ -1,7 +1,7 @@
 package com.flores.h2.spreadbase;
 
-import static com.flores.h2.spreadbase.analyze.WorkbookAnalyzer.makeDataType;
-import static com.flores.h2.spreadbase.analyze.WorkbookAnalyzer.mergeDataType;
+import static com.flores.h2.spreadbase.analyze.DataTypeFactory.*;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

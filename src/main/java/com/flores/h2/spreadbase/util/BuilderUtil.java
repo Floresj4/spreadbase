@@ -31,7 +31,7 @@ public class BuilderUtil {
 	 */
 	public static File fileAsSqlFile(File f) {
 		String path = f.isDirectory() ? f.getPath() : f.getParentFile().getPath();
-		String name = f.getName();
+		String name = f.getName().substring(0, f.getName().indexOf("."));
 		return new File(path, name + ".sql");
 	}
 	

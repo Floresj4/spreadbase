@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -33,7 +35,8 @@ public class WorkbookAnalyzer {
 
 	public static final int UNSET_INT = Integer.MIN_VALUE;
 	
-	private static final String CREATED_FROM = "created from %s:%s";
+	//used as table description, but also comment in .sql file
+	private static final String DLL_CREATED_FROM = "created from %s:%s";
 	
 	public static final String EMPTY_CELL_DATA = "";
 
@@ -46,7 +49,7 @@ public class WorkbookAnalyzer {
 	 * @return
 	 * @throws Exception
 	 */
-	public static List<ITable> analyzeAndWrite(final File fin, List<String>filter) throws Exception {
+	public static List<ITable> analyze(final File fin, List<String>filter) throws Exception {
 		List<ITable> tables = new LinkedList<>();
 		
 		Workbook workbook = WorkbookFactory.create(fin);
@@ -59,74 +62,119 @@ public class WorkbookAnalyzer {
 
 			//some spreadsheets might not have data
 			Row firstRow = null;
-			if((firstRow = containsRowData(sheet)) != null)
+			if((firstRow = containsRowData(sheet)) == null)
 				continue;
 
-			//create the output filename
-			String currentFilename = BuilderUtil.sheetNameToFilename(sheet);
-			logger.debug("Extracting {}", sheet.getSheetName());
+			logger.debug("inspecting {}", sheet.getSheetName());
 
-			//write the current sheet to a file as well
-			try(CsvListWriter w = getListWriter(fin, currentFilename)) {
-				//initialize the table and add columns
-				ITable table = initializeTable(sheet, fin);
-				table.putAll(createColumns(firstRow));
+			//initialize the table and add columns
+			ITable table = initializeTable(sheet, fin);
+			table.putAll(createColumns(firstRow));
 
-				List<Object>data = null;
-				for(int x = 1; x < sheet.getLastRowNum(); x++) {
-					Row row = sheet.getRow(x);
+			List<Object>data = null;
+			for(int x = 1; x < sheet.getLastRowNum(); x++) {
+				Row row = sheet.getRow(x);
 
-					//reset to build the tab delimited data
-					data = new LinkedList<>();
-					for(int y = 0; y < table.size(); y++) {
+				//reset to build the tab delimited data
+				data = new LinkedList<>();
+				for(int y = 0; y < table.size(); y++) {
+					try {
+						IColumn column = table.get(y);
+						String value = getStringValue(row.getCell(y));
+
+						//for DDL handling
+						DataType finaltype = DataTypeFactory.mergeDataType(
+								DataTypeFactory.makeDataType(value),
+								column.getDataType());
+						column.setDataType(finaltype);
+
+						data.add(value);
+					}
+					catch(Exception e) {
+						//these errors are common enough to only debug log them
+						logger.debug("error at cell {}:{}", BuilderUtil
+								.columnNumberToExcelColumnName(x), y);
+
+						//add empty cell data
+						data.add(EMPTY_CELL_DATA);
+					}
+				}
+			}
+
+			tables.add(table);
+		}
+		
+		return tables;
+	}
+	
+	public static void write(File fin) throws Exception {
+		write(fin, BuilderUtil.fileAsSqlFile(fin));
+	}
+
+	public static void write(File fin, File out) throws Exception {
+		write(fin, out, null);
+	}
+
+	/**
+	 * Write the sql definition file (ddl).  Having separate {@code analyze}
+	 * and {@code write} methods is a bit wasteful, but makes for a cleaner API.
+	 * @param in file to handle
+	 * @param out file to create
+	 * @param filter list of sheets to ignore 
+	 * @throws IOException
+	 * @throws InvalidFormatException 
+	 * @throws EncryptedDocumentException 
+	 */
+	public static void write(File in, File out, List<String>filter) throws Exception {
+		//write the current sheet to a file as well
+		try(CsvListWriter w = new CsvListWriter(new FileWriter(out), CsvPreference.EXCEL_PREFERENCE)) {
+			
+			Workbook workbook = WorkbookFactory.create(in);
+			for(int i = 0; i < workbook.getNumberOfSheets(); i++) {
+				Sheet sheet = workbook.getSheetAt(i);
+
+				//make sure we skip the table of contents file
+				if(isFiltered(sheet, filter))
+					continue;
+
+				//some spreadsheets might not have data
+				if(containsRowData(sheet) == null)
+					continue;
+
+				logger.debug("inspecting {}", sheet.getSheetName());
+				for(int j = 0, cols = 0; j < sheet.getLastRowNum(); j++) {
+					Row row = sheet.getRow(j);
+					List<Object>data = new LinkedList<>();
+					
+					int k = 0;
+					while(row.iterator().hasNext() && k < cols) {
 						try {
-							IColumn column = table.get(y);
-							String value = getStringValue(row.getCell(y));
-
-							//for DDL handling
-							DataType finaltype = DataTypeFactory.mergeDataType(
-									DataTypeFactory.makeDataType(value),
-									column.getDataType());
-							column.setDataType(finaltype);
-
+							String value = getStringValue(row.getCell(k));
 							data.add(value);
 						}
 						catch(Exception e) {
 							//these errors are common enough to only debug log them
 							logger.debug("error at cell {}:{}", BuilderUtil
-									.columnNumberToExcelColumnName(x), y);
+									.columnNumberToExcelColumnName(j), k);
 
 							//add empty cell data
 							data.add(EMPTY_CELL_DATA);
 						}
 					}
 
-					//only write if data exists
-					if(data.size() != 0)
-						w.write(data);
+					if(j == 0) //set the total based on the first row
+						cols = data.size();
 				}
-
-				tables.add(table);
 			}
 		}
-		
-		return tables;
 	}
+
 	/**
 	 * @param sheet
 	 * @return the first row if true
 	 */
 	private static Row containsRowData(Sheet sheet) {
-		Row firstRow = sheet.getRow(0);
-		if(firstRow == null)
-			return firstRow;
-		return null;
-	}
-
-	private static CsvListWriter getListWriter(File fin, String currentFilename) throws IOException {
-		return new CsvListWriter(
-				new FileWriter(new File(fin.getParent(), currentFilename.toLowerCase()))
-					, CsvPreference.EXCEL_PREFERENCE);
+		return (sheet.getRow(0) == null) ? null : sheet.getRow(0);
 	}
 
 	/**
@@ -162,13 +210,20 @@ public class WorkbookAnalyzer {
 	}
 
 	private static ITable initializeTable(Sheet sheet, File fin) {
-		String description = String.format(CREATED_FROM, fin.getAbsolutePath(), sheet.getSheetName());
+		//create a description
+		String description = String.format(DLL_CREATED_FROM
+				, fin.getAbsolutePath(), sheet.getSheetName());
+
+		//produce a retunable table
 		ITable t = new Table(sheet.getSheetName(), fin);
 		t.setDescription(description);
 		return t;
 	}
 
 	private static boolean isFiltered(Sheet sheet, List<String> filter) {
+		if(filter == null)
+			return false;
+
 		if(!filter.contains(sheet.getSheetName())) {
 			logger.debug("ignoring {}", sheet.getSheetName());
 			return true;

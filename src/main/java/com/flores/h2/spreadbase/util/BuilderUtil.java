@@ -83,6 +83,7 @@ public class BuilderUtil {
 	}
 
 	/**
+	 * TODO fix this...
 	 * Translate the current column number to the excel character convention
 	 * @param columnNumber numeric value
 	 * @return a string representing the cell in Excel conventions

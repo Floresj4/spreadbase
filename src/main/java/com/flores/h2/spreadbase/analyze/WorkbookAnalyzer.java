@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -142,16 +143,15 @@ public class WorkbookAnalyzer {
 					continue;
 
 				logger.debug("inspecting {}", sheet.getSheetName());
-				for(int j = 0, cols = 0; j < sheet.getLastRowNum(); j++) {
+				for(int j = 0; j < sheet.getLastRowNum(); j++) {
 					Row row = sheet.getRow(j);
 					List<Object>data = new LinkedList<>();
 					
 					int k = 0;
-					while(row.iterator().hasNext() && k < cols) {
-						try {
-							String value = getStringValue(row.getCell(k));
-							data.add(value);
-						}
+					Iterator<Cell>itr = row.iterator();
+					while(itr.hasNext()) {
+						
+						try { data.add(getStringValue(itr.next())); }
 						catch(Exception e) {
 							//these errors are common enough to only debug log them
 							logger.debug("error at cell {}:{}", BuilderUtil
@@ -162,8 +162,7 @@ public class WorkbookAnalyzer {
 						}
 					}
 
-					if(j == 0) //set the total based on the first row
-						cols = data.size();
+					w.write(data);
 				}
 			}
 		}

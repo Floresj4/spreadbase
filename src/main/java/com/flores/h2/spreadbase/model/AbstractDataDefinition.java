@@ -6,7 +6,7 @@ import com.flores.h2.spreadbase.model.impl.DataType;
  * 
  * @author Jason
  */
-public abstract class DataDefinition {
+public abstract class AbstractDataDefinition {
 	
 	/**
 	 * The column for which the data definition
@@ -20,7 +20,7 @@ public abstract class DataDefinition {
 	 */
 	protected DataType priority;
 
-	public DataDefinition(IColumn column, DataType priority) {
+	public AbstractDataDefinition(IColumn column, DataType priority) {
 		this.column = column;
 	}
 	

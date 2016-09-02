@@ -13,10 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.flores.h2.spreadbase.exception.UnsupportedTypeException;
-import com.flores.h2.spreadbase.model.DataDefinition;
+import com.flores.h2.spreadbase.model.AbstractDataDefinition;
 import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.ITable;
-import com.flores.h2.spreadbase.model.h2.DataDefinitionFactory;
+import com.flores.h2.spreadbase.model.h2.DataDefinitionBuilder;
 
 public class TableDefinitionWriter implements Closeable {
 	
@@ -39,11 +39,11 @@ public class TableDefinitionWriter implements Closeable {
 	//terminate table and start select
 	private static final String CSV_READ_LINE = ") as select * from csvread('%s');%n%n";
 
-	private DataDefinitionFactory typeFactory;
+	private DataDefinitionBuilder typeFactory;
 	
 	private static final Logger logger = LoggerFactory.getLogger(TableDefinitionWriter.class);
 
-	public TableDefinitionWriter(File outputFile, DataDefinitionFactory typeFactory) throws IOException {
+	public TableDefinitionWriter(File outputFile, DataDefinitionBuilder typeFactory) throws IOException {
 		writer = new BufferedWriter(new FileWriter(outputFile));
 	}
 
@@ -65,7 +65,7 @@ public class TableDefinitionWriter implements Closeable {
 		for(Entry<String, IColumn> e : table.entrySet()) {
 			IColumn c = e.getValue();
 			
-			DataDefinition definition;
+			AbstractDataDefinition definition;
 			try { definition = typeFactory.createDataDefinition(c); }
 			catch(UnsupportedTypeException u) {
 				logger.error(u.getMessage());
@@ -101,7 +101,7 @@ public class TableDefinitionWriter implements Closeable {
 		writer.close();
 	}
 	
-	private class ErrorDefinition extends DataDefinition {
+	private class ErrorDefinition extends AbstractDataDefinition {
 
 		public ErrorDefinition(IColumn column) {
 			super(column, null);

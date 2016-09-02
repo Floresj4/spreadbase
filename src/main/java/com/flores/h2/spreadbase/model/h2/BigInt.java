@@ -1,6 +1,6 @@
 package com.flores.h2.spreadbase.model.h2;
 
-import com.flores.h2.spreadbase.model.DataDefinition;
+import com.flores.h2.spreadbase.model.AbstractDataDefinition;
 import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.impl.DataType;
 
@@ -8,7 +8,7 @@ import com.flores.h2.spreadbase.model.impl.DataType;
  * TODO: stop replicating {@link #inRange(int)}
  * @author Jason Flores
  */
-public class BigInt extends DataDefinition {
+public class BigInt extends AbstractDataDefinition {
 
 	private static final int MIN_VALUE = -32768;
 	private static final int MAX_VALUE = 32767;

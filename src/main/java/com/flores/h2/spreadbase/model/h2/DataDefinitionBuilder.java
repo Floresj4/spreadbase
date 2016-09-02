@@ -4,8 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.flores.h2.spreadbase.exception.UnsupportedTypeException;
-import com.flores.h2.spreadbase.model.DataDefinition;
+import com.flores.h2.spreadbase.model.AbstractDataDefinition;
 import com.flores.h2.spreadbase.model.IColumn;
+import com.flores.h2.spreadbase.model.IDefinitionBuilder;
 import com.flores.h2.spreadbase.model.impl.DataType;
 import com.flores.h2.spreadbase.util.BuilderUtil;
 
@@ -13,14 +14,15 @@ import com.flores.h2.spreadbase.util.BuilderUtil;
  * Utility class for creating H2 definitions
  * @author Jason Flores
  */
-public class DataDefinitionFactory {
-	private static final Logger logger = LoggerFactory.getLogger(DataDefinitionFactory.class);
+public class DataDefinitionBuilder implements IDefinitionBuilder {
+	private static final Logger logger = LoggerFactory.getLogger(DataDefinitionBuilder.class);
 	
-	public static DataDefinition createDataDefinition(IColumn column) throws UnsupportedTypeException {
+	@Override
+	public AbstractDataDefinition createDataDefinition(IColumn column) throws UnsupportedTypeException {
 		logger.debug("creating definition for {}, column");
 
 		DataType dt =  column.getDataType();
-		DataDefinition definition = null;
+		AbstractDataDefinition definition = null;
 
 		switch(dt.getSimpleTypeName()) {
 			case "String":
@@ -49,7 +51,7 @@ public class DataDefinitionFactory {
 	 * @param maxValue determine while analyzing the input file
 	 * @return a valid numeric data type
 	 */
-	private static DataDefinition asNaturalNumber(IColumn column, DataType priority) {
+	private static AbstractDataDefinition asNaturalNumber(IColumn column, DataType priority) {
 		if (TinyInt.inRange(priority.getPrecision())) 
 			return new TinyInt(column, priority); 
 		 
@@ -67,7 +69,7 @@ public class DataDefinitionFactory {
 	 * @param scale determine while analyzing the input file
 	 * @return a valid numeric data type
 	 */
-	private static DataDefinition asRationalNumber(IColumn column, DataType priority) {
+	private static AbstractDataDefinition asRationalNumber(IColumn column, DataType priority) {
 		return new Double(column, priority);
 	}
 }

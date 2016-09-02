@@ -43,6 +43,10 @@ public class WorkbookAnalyzer {
 
 	private static final Logger logger = LoggerFactory.getLogger(WorkbookAnalyzer.class);
 
+	public static List<ITable> analyze(final File fin) throws Exception {
+		return analyze(fin, null);
+	}
+
 	/**
 	 * 
 	 * @param fin

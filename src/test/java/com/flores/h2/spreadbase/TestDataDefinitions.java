@@ -1,7 +1,6 @@
 package com.flores.h2.spreadbase;
 
 import static com.flores.h2.spreadbase.analyze.DataTypeFactory.makeDataType;
-import static com.flores.h2.spreadbase.model.h2.DataDefinitionFactory.createDataDefinition;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -9,6 +8,8 @@ import org.junit.Test;
 
 import com.flores.LoggedTest;
 import com.flores.h2.spreadbase.exception.UnsupportedTypeException;
+import com.flores.h2.spreadbase.model.IDefinitionBuilder;
+import com.flores.h2.spreadbase.model.h2.DataDefinitionBuilder;
 import com.flores.h2.spreadbase.model.h2.Int;
 import com.flores.h2.spreadbase.model.h2.NVarchar;
 import com.flores.h2.spreadbase.model.h2.SmallInt;
@@ -21,13 +22,16 @@ import com.flores.h2.spreadbase.model.impl.DataType;
  * @author Jason
  */
 public class TestDataDefinitions extends LoggedTest {
+	public static IDefinitionBuilder builder = 
+			new DataDefinitionBuilder();
+
 	/**
 	 * Simply test non-null
 	 * @throws UnsupportedTypeException 
 	 */
 	@Test
 	public void testCreation() throws UnsupportedTypeException {
-		assertNotNull(createDataDefinition(
+		assertNotNull(builder.createDataDefinition(
 				new MockColumn(makeDataType("test"))));
 	}
 	
@@ -37,22 +41,22 @@ public class TestDataDefinitions extends LoggedTest {
 		
 		//nvarchar
 		assertEquals(NVarchar.class.getSimpleName(), 
-				createDataDefinition(c).getClass().getSimpleName());
+				builder.createDataDefinition(c).getClass().getSimpleName());
 		
 		//tinyint
 		c = new MockColumn(makeDataType("6"));
 		assertEquals(TinyInt.class.getSimpleName(),
-				createDataDefinition(c).getClass().getSimpleName());
+				builder.createDataDefinition(c).getClass().getSimpleName());
 		
 		//smallint
 		c = new MockColumn(makeDataType("240"));
 		assertEquals(SmallInt.class.getSimpleName(),
-				createDataDefinition(c).getClass().getSimpleName());
+				builder.createDataDefinition(c).getClass().getSimpleName());
 		
 		//int
 		c = new MockColumn(makeDataType("33000"));
 		assertEquals(Int.class.getSimpleName(),
-				createDataDefinition(c).getClass().getSimpleName());
+				builder.createDataDefinition(c).getClass().getSimpleName());
 	}
 	
 	/**

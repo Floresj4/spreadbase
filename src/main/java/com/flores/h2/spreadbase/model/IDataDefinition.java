@@ -1,9 +1,8 @@
 package com.flores.h2.spreadbase.model;
 
 /**
- * 
  * @author Jason Flores
  */
 public interface IDataDefinition {
-	public AbstractDataDefinition getDataDefintion();
+	public String getDefinition();
 }

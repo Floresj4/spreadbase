@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.flores.h2.spreadbase.exception.UnsupportedTypeException;
-import com.flores.h2.spreadbase.model.AbstractDataDefinition;
 import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.IDefinitionBuilder;
+import com.flores.h2.spreadbase.model.impl.AbstractDataDefinition;
 import com.flores.h2.spreadbase.model.impl.DataType;
 import com.flores.h2.spreadbase.util.BuilderUtil;
 

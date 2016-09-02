@@ -20,9 +20,7 @@ import com.flores.h2.spreadbase.model.impl.AbstractDataDefinition;
 import com.flores.h2.spreadbase.model.impl.ErrorDefinition;
 
 public class TableDefinitionWriter implements Closeable {
-	
-	private Writer writer;
-	
+
 	//create table_name (
 	private static final String TABLE_LINE = "create table %s (%n";
 
@@ -40,6 +38,7 @@ public class TableDefinitionWriter implements Closeable {
 	//terminate table and start select
 	private static final String CSV_READ_LINE = ") as select * from csvread('%s');%n%n";
 
+	private Writer writer;
 	private IDefinitionBuilder typeFactory;
 	
 	private static final Logger logger = LoggerFactory.getLogger(TableDefinitionWriter.class);

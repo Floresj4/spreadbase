@@ -3,8 +3,8 @@ package com.flores.h2.spreadbase.analyze;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -215,7 +215,7 @@ public class WorkbookAnalyzer {
 	private static ITable initializeTable(Sheet sheet, File fin) {
 		//create a description
 		String description = String.format(DLL_CREATED_FROM
-				, fin.getAbsolutePath(), sheet.getSheetName());
+				, fin.getPath(), sheet.getSheetName());
 
 		//produce a retunable table
 		ITable t = new Table(sheet.getSheetName(), fin);
@@ -235,7 +235,7 @@ public class WorkbookAnalyzer {
 	}
 
 	private static Map<String, IColumn> createColumns(Row firstrow) {
-		Map<String, IColumn>c = new HashMap<>();
+		Map<String, IColumn>c = new LinkedHashMap<>();
 		firstrow.forEach(r -> {
 			String name = getStringValue(r);
 			c.put(name, new Column(name));

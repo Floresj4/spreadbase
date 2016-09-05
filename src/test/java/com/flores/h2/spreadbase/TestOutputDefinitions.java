@@ -1,11 +1,16 @@
 package com.flores.h2.spreadbase;
 
 import java.io.File;
+import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.flores.LoggedTest;
 import com.flores.h2.spreadbase.analyze.WorkbookAnalyzer;
+import com.flores.h2.spreadbase.io.TableDefinitionWriter;
+import com.flores.h2.spreadbase.model.ITable;
+import com.flores.h2.spreadbase.model.h2.DataDefinitionBuilder;
 import com.flores.h2.spreadbase.util.BuilderUtil;
 
 /**
@@ -21,6 +26,8 @@ public class TestOutputDefinitions {
 
 	@BeforeClass
 	public static void init() {
+		LoggedTest.init();
+		
 		in = new File(TEST_FILE);
 		out = new File(OUTPUT_DIR, BuilderUtil.fileAsSqlFile(in)
 				.getName());
@@ -30,6 +37,12 @@ public class TestOutputDefinitions {
 
 	@Test
 	public void testH2DataDefintion() throws Exception {
-		WorkbookAnalyzer.write(in, out);
+		List<ITable> tables = WorkbookAnalyzer.analyze(in);
+		TableDefinitionWriter w = new TableDefinitionWriter(out, new DataDefinitionBuilder());
+
+		for(ITable t : tables)
+			w.write(t);
+		
+		w.close();
 	}
 }

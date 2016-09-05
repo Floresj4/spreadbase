@@ -1,4 +1,4 @@
-package com.flores.h2.spreadbase.model.h2;
+package com.flores.h2.spreadbase.model.impl.h2;
 
 import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.impl.AbstractDataDefinition;

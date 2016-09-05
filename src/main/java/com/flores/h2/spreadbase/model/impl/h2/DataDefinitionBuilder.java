@@ -1,4 +1,4 @@
-package com.flores.h2.spreadbase.model.h2;
+package com.flores.h2.spreadbase.model.impl.h2;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -10,7 +10,7 @@ import com.flores.LoggedTest;
 import com.flores.h2.spreadbase.analyze.WorkbookAnalyzer;
 import com.flores.h2.spreadbase.io.TableDefinitionWriter;
 import com.flores.h2.spreadbase.model.ITable;
-import com.flores.h2.spreadbase.model.h2.DataDefinitionBuilder;
+import com.flores.h2.spreadbase.model.impl.h2.DataDefinitionBuilder;
 import com.flores.h2.spreadbase.util.BuilderUtil;
 
 /**

@@ -1,4 +1,4 @@
-package com.flores.h2.spreadbase.model.h2;
+package com.flores.h2.spreadbase.model.impl.h2;
 
 import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.impl.AbstractDataDefinition;
@@ -8,18 +8,18 @@ import com.flores.h2.spreadbase.model.impl.DataType;
  * 
  * @author Jason
  */
-public class SmallInt extends AbstractDataDefinition {
+public class TinyInt extends AbstractDataDefinition {
 
-	private static final int MIN_VALUE = -32768;
-	private static final int MAX_VALUE = 32767;
+	public static final int MIN_VALUE = -128;
+	public static final int MAX_VALUE = 127;
 
-	public SmallInt(IColumn column, DataType priority) {
+	public TinyInt(IColumn column, DataType priority) {
 		super(column, priority);
 	}
 
 	@Override
 	public String getDefinition() {
-		return "smallint";
+		return "tinyint";
 	}
 	
 	public static boolean inRange(int value) {

@@ -9,13 +9,13 @@ import org.junit.Test;
 import com.flores.LoggedTest;
 import com.flores.h2.spreadbase.exception.UnsupportedTypeException;
 import com.flores.h2.spreadbase.model.IDefinitionBuilder;
-import com.flores.h2.spreadbase.model.h2.DataDefinitionBuilder;
-import com.flores.h2.spreadbase.model.h2.Int;
-import com.flores.h2.spreadbase.model.h2.NVarchar;
-import com.flores.h2.spreadbase.model.h2.SmallInt;
-import com.flores.h2.spreadbase.model.h2.TinyInt;
 import com.flores.h2.spreadbase.model.impl.Column;
 import com.flores.h2.spreadbase.model.impl.DataType;
+import com.flores.h2.spreadbase.model.impl.h2.DataDefinitionBuilder;
+import com.flores.h2.spreadbase.model.impl.h2.Int;
+import com.flores.h2.spreadbase.model.impl.h2.NVarchar;
+import com.flores.h2.spreadbase.model.impl.h2.SmallInt;
+import com.flores.h2.spreadbase.model.impl.h2.TinyInt;
 
 /**
  * Test the creation of DataType definitions

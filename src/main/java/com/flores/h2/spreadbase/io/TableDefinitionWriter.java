@@ -73,7 +73,8 @@ public class TableDefinitionWriter implements Closeable {
 				definition = new ErrorDefinition(c);
 			}
 			
-			writer.write(String.format(COLUMN_LINE, c.getName()
+			writer.write(String.format(COLUMN_LINE, 
+					c.getName().replaceAll(" ", "_").toLowerCase()
 				, definition.getDefinition()));
 		}
 
@@ -82,9 +83,13 @@ public class TableDefinitionWriter implements Closeable {
 	}
 
 	private File targetAsCsv(File fromFile) {
-		String filename = fromFile.getName()
-				.substring(0, fromFile.getName().indexOf(".")) + ".csv";
-		return new File(fromFile.getParentFile(), filename);
+		String filename = fromFile.getName();
+		String csvname = filename.substring(0, filename.indexOf(".")) + ".csv";
+
+		String directory = fromFile.getParentFile().getAbsolutePath();
+		directory = directory.replace("\\.\\", "\\");
+
+		return new File(directory, csvname);
 	}
 
 	/**

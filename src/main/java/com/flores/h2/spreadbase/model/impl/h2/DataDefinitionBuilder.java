@@ -31,11 +31,6 @@ public class DataDefinitionBuilder implements IDefinitionBuilder {
 
 			default:
 
-				//only handling integers and doubles at the moment
-				if(!dt.getType().equals(Integer.class) && !dt.getType().equals(Double.class))
-					throw new UnsupportedTypeException("The type " + 
-							dt.getType().getSimpleName() + " is not a supported number class");
-
 				return (dt.getScale() == BuilderUtil.UNSET_INT)
 					? asNaturalNumber(column, dt)
 							: asRationalNumber(column, dt);

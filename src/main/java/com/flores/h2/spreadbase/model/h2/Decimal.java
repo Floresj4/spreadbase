@@ -19,6 +19,6 @@ public class Decimal extends AbstractDataDefinition {
 	@Override
 	public String getDefinition() {
 		return String.format(DEFINITION
-				, priority.getPrecision(), priority.getScale());
+				, dt.getPrecision(), dt.getScale());
 	}
 }

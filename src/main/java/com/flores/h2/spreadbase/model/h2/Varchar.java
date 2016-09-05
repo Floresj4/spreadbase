@@ -18,6 +18,6 @@ public class Varchar extends AbstractDataDefinition {
 
 	@Override
 	public String getDefinition() {
-		return String.format(DEFINITION, priority.getPrecision());
+		return String.format(DEFINITION, dt.getPrecision());
 	}
 }

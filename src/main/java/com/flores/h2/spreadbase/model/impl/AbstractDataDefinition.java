@@ -20,10 +20,10 @@ public abstract class AbstractDataDefinition implements IDataDefinition {
 	 * typemap within the column this
 	 * is the one chosen externally by a hierarchy
 	 */
-	protected DataType priority;
+	protected DataType dt;
 
-	public AbstractDataDefinition(IColumn column, DataType dt) {
-		this.column = column;
-		this.priority = dt;
+	public AbstractDataDefinition(IColumn col, DataType dt) {
+		this.column = col;
+		this.dt = dt;
 	}
 }

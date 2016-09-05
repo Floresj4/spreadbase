@@ -14,6 +14,7 @@ public abstract class AbstractDataDefinition implements IDataDefinition {
 	 * will be created
 	 */
 	protected IColumn column;
+	
 	/**
 	 * Although it resides in the the
 	 * typemap within the column this
@@ -21,7 +22,8 @@ public abstract class AbstractDataDefinition implements IDataDefinition {
 	 */
 	protected DataType priority;
 
-	public AbstractDataDefinition(IColumn column, DataType priority) {
+	public AbstractDataDefinition(IColumn column, DataType dt) {
 		this.column = column;
+		this.priority = dt;
 	}
 }

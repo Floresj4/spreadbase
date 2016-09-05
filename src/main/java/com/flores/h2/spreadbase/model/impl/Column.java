@@ -58,8 +58,9 @@ public class Column implements IColumn {
 	 * TODO: add JAXB annotations
 	 */
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Column { name: ").append(name).append(BuilderUtil.NEW_LINE);
-		return builder.append("}").toString();
+		StringBuilder builder = new StringBuilder("Column {")
+		.append("name: " + this.name).append(BuilderUtil.NEW_LINE)
+		.append("datatype: " + this.dataType);
+		return builder.toString();
 	}
 }

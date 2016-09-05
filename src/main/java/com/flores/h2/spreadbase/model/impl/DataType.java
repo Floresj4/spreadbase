@@ -1,5 +1,9 @@
 package com.flores.h2.spreadbase.model.impl;
 
+/**
+ * 
+ * @author Jason
+ */
 public class DataType {
 	
 	Class<?>type;
@@ -23,6 +27,7 @@ public class DataType {
 	public String getSimpleTypeName() { return type.getSimpleName(); }
 
 	public String toString() {
-		return String.format("%s %d %s", type, precision, scale);
+		return String.format("\t\ttype: %s%n\t\tprecision: %d%n\t\tscale: %s"
+				, type, precision, scale);
 	}
 }

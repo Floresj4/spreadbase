@@ -25,14 +25,14 @@ public class Table implements ITable {
 
 	private File fromFile;
 	
-	protected Map<String, IColumn> columns = new LinkedHashMap<>();
+	protected Map<String, IColumn> columns;
 
 	public Table(String name) {
 		this(name, null);
 	}
 
 	public Table(String name, File fromFile) {
-		this(name, fromFile, null);
+		this(name, fromFile, new LinkedHashMap<>());
 	}
 
 	public Table(String name, File fromFile, Map<String, IColumn>columns) {
@@ -149,10 +149,12 @@ public class Table implements ITable {
 	public String toString() {
 		StringBuilder builder = new StringBuilder(getName())
 			.append(" (").append(BuilderUtil.NEW_LINE);
-		for(Entry<String, IColumn> e : entrySet())
-			builder.append(String.format("\t%s",e.getValue().toString()))
-				.append(BuilderUtil.NEW_LINE);
-
+		
+		this.forEach((k,v) -> {
+			builder.append( String.format("\t%s", v.getName()))
+				.append(BuilderUtil.NEW_LINE);	
+		});
+		
 		return builder.append(")").append(BuilderUtil.NEW_LINE).toString();
 	}
 

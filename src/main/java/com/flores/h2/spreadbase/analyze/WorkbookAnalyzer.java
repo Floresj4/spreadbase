@@ -111,41 +111,38 @@ public class WorkbookAnalyzer {
 		
 		return tables;
 	}
-	
-	public static void write(File fin) throws Exception {
-		write(fin, BuilderUtil.fileAsSqlFile(fin));
-	}
 
-	public static void write(File fin, File out) throws Exception {
-		write(fin, out, null);
+	public static void write(File fin) throws Exception {
+		write(fin, null);
 	}
 
 	/**
 	 * Write the sql definition file (ddl).  Having separate {@code analyze}
 	 * and {@code write} methods is a bit wasteful, but makes for a cleaner API.
 	 * @param in file to handle
-	 * @param out file to create
 	 * @param filter list of sheets to ignore 
 	 * @throws IOException
 	 * @throws InvalidFormatException 
 	 * @throws EncryptedDocumentException 
 	 */
-	public static void write(File in, File out, List<String>filter) throws Exception {
-		//write the current sheet to a file as well
-		try(CsvListWriter w = new CsvListWriter(new FileWriter(out), CsvPreference.EXCEL_PREFERENCE)) {
+	public static void write(File in, List<String>filter) throws Exception {
+		Workbook workbook = WorkbookFactory.create(in);
+		for(int i = 0; i < workbook.getNumberOfSheets(); i++) {
+			Sheet sheet = workbook.getSheetAt(i);
+
+			//make sure we skip the table of contents file
+			if(isFiltered(sheet, filter))
+				continue;
+
+			//some spreadsheets might not have data
+			if(containsRowData(sheet) == null)
+				continue;
 			
-			Workbook workbook = WorkbookFactory.create(in);
-			for(int i = 0; i < workbook.getNumberOfSheets(); i++) {
-				Sheet sheet = workbook.getSheetAt(i);
-
-				//make sure we skip the table of contents file
-				if(isFiltered(sheet, filter))
-					continue;
-
-				//some spreadsheets might not have data
-				if(containsRowData(sheet) == null)
-					continue;
-
+			
+			File csvOut = new File(in.getParent(), sheet.getSheetName());
+			
+			//write the current sheet to a file as well
+			try(CsvListWriter w = new CsvListWriter(new FileWriter(csvOut), CsvPreference.EXCEL_PREFERENCE)) {
 				logger.debug("inspecting {}", sheet.getSheetName());
 				for(int j = 0; j < sheet.getLastRowNum(); j++) {
 					Row row = sheet.getRow(j);

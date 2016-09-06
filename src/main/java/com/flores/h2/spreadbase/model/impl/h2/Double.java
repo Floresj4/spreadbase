@@ -10,7 +10,7 @@ import com.flores.h2.spreadbase.model.impl.DataType;
  */
 public class Double extends AbstractDataDefinition {
 
-	private static final String DEFINITION = "double(%d, %d)";
+	private static final String DEFINITION = "double";
 	
 	public Double(IColumn column, DataType priority) {
 		super(column, priority);

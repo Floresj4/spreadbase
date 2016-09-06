@@ -14,7 +14,6 @@ public class NVarchar extends AbstractDataDefinition {
 
 	@Override
 	public String getDefinition() {
-		String largestValue = String.valueOf(dt.getPrecision());
-		return String.format(DEFINITION, largestValue.length());
+		return String.format(DEFINITION, dt.getPrecision());
 	}
 }

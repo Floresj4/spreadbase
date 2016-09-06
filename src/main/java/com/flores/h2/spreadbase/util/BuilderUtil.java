@@ -29,10 +29,29 @@ public class BuilderUtil {
 	 * @param f
 	 * @return
 	 */
+	public static File fileAsCsvFile(File f) {
+		return fileAs(f, ".csv");
+	}
+	
+	/**
+	 * 
+	 * @param f
+	 * @return
+	 */
 	public static File fileAsSqlFile(File f) {
+		return fileAs(f, ".sql");
+	}
+	
+	/**
+	 * 
+	 * @param f
+	 * @param ext
+	 * @return
+	 */
+	private static File fileAs(File f, String ext) {
 		String path = f.isDirectory() ? f.getPath() : f.getParentFile().getPath();
 		String name = f.getName().substring(0, f.getName().indexOf("."));
-		return new File(path, name + ".sql");
+		return new File(path, name + ext);		
 	}
 	
 	/**

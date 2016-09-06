@@ -116,6 +116,10 @@ public class WorkbookAnalyzer {
 		write(fin, null);
 	}
 
+	public static void write(File fin, File outDir) throws Exception {
+		write(fin, outDir, null);
+	}
+
 	/**
 	 * Write the sql definition file (ddl).  Having separate {@code analyze}
 	 * and {@code write} methods is a bit wasteful, but makes for a cleaner API.
@@ -125,7 +129,7 @@ public class WorkbookAnalyzer {
 	 * @throws InvalidFormatException 
 	 * @throws EncryptedDocumentException 
 	 */
-	public static void write(File in, List<String>filter) throws Exception {
+	public static void write(File in, File outDir, List<String>filter) throws Exception {
 		Workbook workbook = WorkbookFactory.create(in);
 		for(int i = 0; i < workbook.getNumberOfSheets(); i++) {
 			Sheet sheet = workbook.getSheetAt(i);
@@ -137,9 +141,10 @@ public class WorkbookAnalyzer {
 			//some spreadsheets might not have data
 			if(containsRowData(sheet) == null)
 				continue;
-			
-			
-			File csvOut = new File(in.getParent(), sheet.getSheetName());
+
+			File csvOut = new File(outDir == null 
+					? in.getParent() : outDir.getPath()
+							, sheet.getSheetName() + ".csv");
 			
 			//write the current sheet to a file as well
 			try(CsvListWriter w = new CsvListWriter(new FileWriter(csvOut), CsvPreference.EXCEL_PREFERENCE)) {

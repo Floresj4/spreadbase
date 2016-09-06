@@ -38,13 +38,15 @@ public class TableDefinitionWriter implements Closeable {
 	//terminate table and start select
 	private static final String CSV_READ_LINE = ") as select * from csvread('%s');%n%n";
 
+	private File outputFile;
 	private Writer writer;
 	private IDefinitionBuilder definitionBuilder;
 	
 	private static final Logger logger = LoggerFactory.getLogger(TableDefinitionWriter.class);
 
 	public TableDefinitionWriter(File outputFile, IDefinitionBuilder defBuilder) throws IOException {
-		writer = new BufferedWriter(new FileWriter(outputFile));
+		this.outputFile = outputFile;
+		this.writer = new BufferedWriter(new FileWriter(outputFile));
 		this.definitionBuilder = defBuilder;
 	}
 
@@ -79,7 +81,7 @@ public class TableDefinitionWriter implements Closeable {
 		}
 
 		//terminate the table definition
-		File csvFile = new File(table.getFromFile().getParent(), table.getName());
+		File csvFile = new File(outputFile.getParent(), table.getName());
 		writer.write(String.format(CSV_READ_LINE, targetAsCsv(csvFile)));
 	}
 

@@ -79,12 +79,19 @@ public class TableDefinitionWriter implements Closeable {
 		}
 
 		//terminate the table definition
-		writer.write(String.format(CSV_READ_LINE, targetAsCsv(table.getFromFile())));
+		File csvFile = new File(table.getFromFile().getParent(), table.getName());
+		writer.write(String.format(CSV_READ_LINE, targetAsCsv(csvFile)));
 	}
 
 	private File targetAsCsv(File fromFile) {
 		String filename = fromFile.getName();
-		String csvname = filename.substring(0, filename.indexOf(".")) + ".csv";
+		
+		String csvname;
+		int sfx = filename.indexOf(".");
+
+		csvname = (sfx > -1)
+			? filename.substring(0, sfx) + ".csv"
+					: filename + ".csv";
 
 		String directory = fromFile.getParentFile().getAbsolutePath();
 		directory = directory.replace("\\.\\", "\\");

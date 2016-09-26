@@ -68,17 +68,17 @@ public class TestOutputDefinitions {
 		List<ITable> tables = WorkbookAnalyzer.analyze(in);
 		WorkbookAnalyzer.write(in, outDir);
 		
+		//write the definitions from analysis
 		TableDefinitionWriter w = new TableDefinitionWriter(sqlOut, new DataDefinitionBuilder());
 		w.write(tables);
 		w.close();
 
-		//load driver
+		//load driver & open connection
 		Class.forName("org.h2.Driver");
 		Connection conn = DriverManager.getConnection("jdbc:h2:" + TEST_CONN_STR_DB, "sa", "");
 		
 		//run the output script of the table definition process
 		RunScript.execute(conn, new InputStreamReader(new FileInputStream(sqlOut)));
-		
 		conn.close();
 	}
 }

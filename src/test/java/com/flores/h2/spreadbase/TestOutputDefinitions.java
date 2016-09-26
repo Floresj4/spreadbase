@@ -72,53 +72,57 @@ public class TestOutputDefinitions {
 	public void testLoad() throws Exception {
 		logger.debug("determining data definitions...");
 
-		File outDir = new File(OUTPUT_DIR);
-		List<ITable> tables = WorkbookAnalyzer.analyze(in);
-		WorkbookAnalyzer.write(in, outDir);
-
-		//write the definitions from analysis
-		TableDefinitionWriter w = new TableDefinitionWriter(sqlOut, new DataDefinitionBuilder());
-		w.write(tables);
-		w.close();
-
-		//load driver & open connection
-		Class.forName("org.h2.Driver");
-		Connection conn = DriverManager.getConnection("jdbc:h2:" + TEST_CONN_STR_DB, "sa", "");
+		Connection conn = null;
 		
-		//run the output script of the table definition process
-		RunScript.execute(conn, new InputStreamReader(new FileInputStream(sqlOut)));
-		
-		String TEST_QUERY = "select * from employees e "
-				+ "left join address a on e.id = a.employee_id	"
-				+ "left join scores s on s.id = e.id";
-		
-		System.out.println("=======================================================");
-		
-		//test database contents
-		Statement stmnt = conn.createStatement();
-		if(stmnt.execute(TEST_QUERY)) {
-			ResultSet rs = stmnt.getResultSet();
-			while(rs.next()) {
-
-				//get data
-				Employee e = new Employee(
-					rs.getInt(1), 
-					rs.getString(2),
-					rs.getString(3),
-					rs.getDouble(11));
-				
-				//test content
-				assertTrue(e.fname != null && e.fname.length() > 0);
-				assertTrue(e.lname != null && e.lname.length() > 0);
-				assertTrue(e.s1 > 0);
-				
-				System.out.println(e);
-			}
-		} else fail();
-		
-		System.out.println("=======================================================");
-		
-		conn.close();
+		try {
+			File outDir = new File(OUTPUT_DIR);
+			List<ITable> tables = WorkbookAnalyzer.analyze(in);
+			WorkbookAnalyzer.write(in, outDir);
+	
+			//write the definitions from analysis
+			TableDefinitionWriter w = new TableDefinitionWriter(sqlOut, new DataDefinitionBuilder());
+			w.write(tables);
+			w.close();
+	
+			//load driver & open connection
+			Class.forName("org.h2.Driver");
+			conn = DriverManager.getConnection("jdbc:h2:" + TEST_CONN_STR_DB, "sa", "");
+			
+			//run the output script of the table definition process
+			RunScript.execute(conn, new InputStreamReader(new FileInputStream(sqlOut)));
+			
+			String TEST_QUERY = "select * from employees e "
+					+ "left join address a on e.id = a.id	"
+					+ "left join scores s on s.id = e.id";
+			
+			System.out.println("=======================================================");
+			
+			//test database contents
+			Statement stmnt = conn.createStatement();
+			if(stmnt.execute(TEST_QUERY)) {
+				ResultSet rs = stmnt.getResultSet();
+				while(rs.next()) {
+	
+					//get data
+					Employee e = new Employee(
+						rs.getInt(1), 
+						rs.getString(2),
+						rs.getString(3),
+						rs.getDouble(11));
+					
+					//test content
+					assertTrue(e.fname != null && e.fname.length() > 0);
+					assertTrue(e.lname != null && e.lname.length() > 0);
+					assertTrue(e.s1 > 0);
+					
+					System.out.println(e);
+				}
+			} else fail();
+			
+			System.out.println("=======================================================");
+		} finally {
+			if(conn != null) conn.close();
+		}
 	}
 	
 	/**

@@ -1,10 +1,14 @@
 package com.flores.h2.spreadbase;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.List;
 
 import org.h2.tools.RunScript;
@@ -60,6 +64,10 @@ public class TestOutputDefinitions {
 		w.close();
 	}
 	
+	/**
+	 * Test the translation from xlsx to database
+	 * @throws Exception
+	 */
 	@Test
 	public void testLoad() throws Exception {
 		logger.debug("determining data definitions...");
@@ -67,7 +75,7 @@ public class TestOutputDefinitions {
 		File outDir = new File(OUTPUT_DIR);
 		List<ITable> tables = WorkbookAnalyzer.analyze(in);
 		WorkbookAnalyzer.write(in, outDir);
-		
+
 		//write the definitions from analysis
 		TableDefinitionWriter w = new TableDefinitionWriter(sqlOut, new DataDefinitionBuilder());
 		w.write(tables);
@@ -79,6 +87,58 @@ public class TestOutputDefinitions {
 		
 		//run the output script of the table definition process
 		RunScript.execute(conn, new InputStreamReader(new FileInputStream(sqlOut)));
+		
+		String TEST_QUERY = "select * from employees e "
+				+ "left join address a on e.id = a.employee_id	"
+				+ "left join scores s on s.id = e.id";
+		
+		System.out.println("=======================================================");
+		
+		//test database contents
+		Statement stmnt = conn.createStatement();
+		if(stmnt.execute(TEST_QUERY)) {
+			ResultSet rs = stmnt.getResultSet();
+			while(rs.next()) {
+
+				//get data
+				Employee e = new Employee(
+					rs.getInt(1), 
+					rs.getString(2),
+					rs.getString(3),
+					rs.getDouble(11));
+				
+				//test content
+				assertTrue(e.fname != null && e.fname.length() > 0);
+				assertTrue(e.lname != null && e.lname.length() > 0);
+				assertTrue(e.s1 > 0);
+				
+				System.out.println(e);
+			}
+		} else fail();
+		
+		System.out.println("=======================================================");
+		
 		conn.close();
+	}
+	
+	/**
+	 * Simple pojo
+	 * @author Jason
+	 */
+	class Employee {
+		int id;
+		String fname;
+		String lname;
+		double s1;
+		public Employee(int id, String fname, String lname, double s1) {
+			this.id = id;
+			this.fname = fname;
+			this.lname = lname;
+			this.s1 = s1;
+		}
+		
+		public String toString() {
+			return String.format("  id = %d, fname: %s lname: %s score1 %4f", id, fname, lname, s1);
+		}
 	}
 }

@@ -10,6 +10,6 @@ import org.junit.BeforeClass;
 public class LoggedTest {
 	@BeforeClass
 	public static void init() {
-		PropertyConfigurator.configure("./deliverables/log4j.properties");
+		PropertyConfigurator.configure("./src/test/resources/log4j.properties");
 	}
 }

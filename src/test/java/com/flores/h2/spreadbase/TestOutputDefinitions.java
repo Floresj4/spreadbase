@@ -29,7 +29,7 @@ import com.flores.h2.spreadbase.util.BuilderUtil;
  */
 public class TestOutputDefinitions {
 
-	private static final String TEST_FILE = "./deliverables/test/test.xlsx";
+	private static final String TEST_FILE = "./src/test/resources/test.xlsx";
 	private static final String TEST_CONN_STR_DB = "./target/test-db/test;MV_STORE=FALSE;FILE_LOCK=NO";
 	private static final String OUTPUT_DIR =  "./target/test-output";
 	

@@ -1,6 +1,6 @@
 package com.flores.h2.spreadbase;
 
-import static com.flores.h2.spreadbase.analyze.DataTypeFactory.makeDataType;
+import static com.flores.h2.spreadbase.DataTypeFactory.makeDataType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

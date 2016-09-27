@@ -32,7 +32,7 @@ import com.flores.h2.spreadbase.util.BuilderUtil;
  * 
  * @author Jason Flores
  */
-public class WorkbookAnalyzer {
+public class Spreadbase {
 
 	public static final int UNSET_INT = Integer.MIN_VALUE;
 	
@@ -41,7 +41,7 @@ public class WorkbookAnalyzer {
 	
 	public static final String EMPTY_CELL_DATA = "";
 
-	private static final Logger logger = LoggerFactory.getLogger(WorkbookAnalyzer.class);
+	private static final Logger logger = LoggerFactory.getLogger(Spreadbase.class);
 
 	public static List<ITable> analyze(final File fin) throws Exception {
 		return analyze(fin, null);

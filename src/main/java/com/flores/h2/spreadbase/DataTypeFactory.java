@@ -1,4 +1,4 @@
-package com.flores.h2.spreadbase.analyze;
+package com.flores.h2.spreadbase;
 
 import com.flores.h2.spreadbase.model.impl.DataType;
 import com.flores.h2.spreadbase.util.BuilderUtil;

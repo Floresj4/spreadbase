@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.flores.LoggedTest;
-import com.flores.h2.spreadbase.analyze.Spreadbase;
+import com.flores.h2.spreadbase.Spreadbase;
 import com.flores.h2.spreadbase.io.TableDefinitionWriter;
 import com.flores.h2.spreadbase.model.ITable;
 import com.flores.h2.spreadbase.model.impl.h2.DataDefinitionBuilder;

@@ -1,4 +1,4 @@
-package com.flores.h2.spreadbase.analyze;
+package com.flores.h2.spreadbase;
 
 import java.io.File;
 import java.io.FileWriter;

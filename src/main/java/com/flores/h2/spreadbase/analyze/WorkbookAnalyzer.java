@@ -77,7 +77,7 @@ public class WorkbookAnalyzer {
 			table.putAll(createColumns(firstRow));
 
 			List<Object>data = null;
-			for(int x = 1; x < sheet.getLastRowNum(); x++) {
+			for(int x = 1; x <= sheet.getLastRowNum(); x++) {
 				Row row = sheet.getRow(x);
 
 				//reset to build the tab delimited data
@@ -149,7 +149,7 @@ public class WorkbookAnalyzer {
 			//write the current sheet to a file as well
 			try(CsvListWriter w = new CsvListWriter(new FileWriter(csvOut), CsvPreference.EXCEL_PREFERENCE)) {
 				logger.debug("inspecting {}", sheet.getSheetName());
-				for(int j = 0; j < sheet.getLastRowNum(); j++) {
+				for(int j = 0; j <= sheet.getLastRowNum(); j++) {
 					Row row = sheet.getRow(j);
 					List<Object>data = new LinkedList<>();
 					

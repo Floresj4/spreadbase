@@ -1,7 +1,6 @@
 package com.flores.h2.spreadbase.model.impl;
 
 import com.flores.h2.spreadbase.model.IColumn;
-import com.flores.h2.spreadbase.util.BuilderUtil;
 
 /**
  * One of the main class of this project. Column metadata.  The {@code typeMap}
@@ -58,9 +57,7 @@ public class Column implements IColumn {
 	 * TODO: add JAXB annotations
 	 */
 	public String toString() {
-		StringBuilder builder = new StringBuilder("Column {")
-		.append("name: " + this.name).append(BuilderUtil.NEW_LINE)
-		.append("datatype: " + this.dataType);
-		return builder.toString();
+		return String.format("[name: %s desc: %s%n%s]%n"
+				, name, description, dataType);
 	}
 }

@@ -4,4 +4,4 @@ spreadbase is a Workbook (Excel) to [H2](http://h2database.com/html/main.html) d
 
 ##Building
 
-spreadbase builds using maven - `mvn package`
+spreadbase builds using maven - `mvn package`.

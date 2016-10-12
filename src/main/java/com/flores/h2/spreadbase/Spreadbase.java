@@ -29,7 +29,10 @@ import com.flores.h2.spreadbase.model.impl.Table;
 import com.flores.h2.spreadbase.util.BuilderUtil;
 
 /**
- * 
+ * Worksheet conversion project.  Allow for the analysis
+ * of sheets in a workbook and produce H2 compatible Data Definition Language (DDL)
+ * or output sheets as comma-separated files.
+ * </ul>
  * @author Jason Flores
  */
 public class Spreadbase {
@@ -48,11 +51,12 @@ public class Spreadbase {
 	}
 
 	/**
-	 * 
-	 * @param fin
-	 * @param filter
-	 * @return
+	 * Inspect the current file and produce a table instance for each worksheet
+	 * @param fin file in
+	 * @param filter sheet names to ignore
+	 * @return a non-null list of tables
 	 * @throws Exception
+	 * @see ITable
 	 */
 	public static List<ITable> analyze(final File fin, List<String>filter) throws Exception {
 		List<ITable> tables = new LinkedList<>();

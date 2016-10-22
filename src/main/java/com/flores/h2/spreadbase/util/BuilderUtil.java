@@ -38,6 +38,15 @@ public class BuilderUtil {
 	 * @param f
 	 * @return
 	 */
+	public static File fileAsH2File(File f) {
+		return fileAs(f, "");
+	}
+	
+	/**
+	 * 
+	 * @param f
+	 * @return
+	 */
 	public static File fileAsSqlFile(File f) {
 		return fileAs(f, ".sql");
 	}

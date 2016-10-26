@@ -1,8 +1,13 @@
 package com.flores.h2.spreadbase;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -16,16 +21,19 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.h2.tools.RunScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.supercsv.io.CsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
+import com.flores.h2.spreadbase.io.TableDefinitionWriter;
 import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.ITable;
 import com.flores.h2.spreadbase.model.impl.Column;
 import com.flores.h2.spreadbase.model.impl.DataType;
 import com.flores.h2.spreadbase.model.impl.Table;
+import com.flores.h2.spreadbase.model.impl.h2.DataDefinitionBuilder;
 import com.flores.h2.spreadbase.util.BuilderUtil;
 import com.flores.h2.spreadbase.util.TypeHierarchy;
 
@@ -42,7 +50,7 @@ public class Spreadbase {
 	
 	//used as table description, but also comment in .sql file
 	private static final String DLL_CREATED_FROM = "created from %s:%s";
-	
+	private static final String CONN_STR = "%s;MV_STORE=FALSE;FILE_LOCK=NO";
 	public static final String EMPTY_CELL_DATA = "";
 
 	private static final Logger logger = LoggerFactory.getLogger(Spreadbase.class);
@@ -117,6 +125,51 @@ public class Spreadbase {
 		return tables;
 	}
 
+	/**
+	 * The focal method of this class orchestrating calls to analyze, write, and producing
+	 * the resulting H2 database file.
+	 * @param in XLS|XLSX workbook
+	 * @throws Exception
+	 * 
+	 * @see TableDefinitionWriter
+	 */
+	public static void asDataSource(File in) throws Exception {
+		File sqlFile;
+		List<ITable> tables;
+		File outDir = in.getParentFile();
+		
+		try {
+			tables = Spreadbase.analyze(in);
+			Spreadbase.write(in, outDir);
+		} catch(Exception e) {
+			logger.error("determining data definition: {}", e.getMessage());
+			throw e;
+		}
+
+		//write the definitions from analysis
+		try(TableDefinitionWriter w = new TableDefinitionWriter(
+				sqlFile = BuilderUtil.fileAsSqlFile(in), new DataDefinitionBuilder())){
+			w.write(tables);
+		} catch(IOException ioe) {
+			logger.error("writing table definition: {}", ioe.getMessage());
+			throw ioe;
+		}
+
+		//load driver & open connection
+		Class.forName("org.h2.Driver");
+		Connection conn = DriverManager.getConnection(
+				"jdbc:h2:" + String.format(CONN_STR, 
+						BuilderUtil.fileAsH2File(in)), "sa", "");
+
+		try {
+			//run the output script of the table definition process
+			RunScript.execute(conn, new InputStreamReader(new FileInputStream(sqlFile)));
+		} catch(SQLException sqle) {
+			logger.debug("executing {} script: {}", sqlFile.getName(), sqle.getMessage());
+			throw sqle;
+		}
+	}
+	
 	public static void write(File fin) throws Exception {
 		write(fin, null);
 	}

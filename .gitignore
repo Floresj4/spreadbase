@@ -9,3 +9,6 @@
 #project specific files
 processing.log
 deliverables/lib/*.jar
+src/test/resources/*.csv
+src/test/resources/*.db
+src/test/resources/*.sql

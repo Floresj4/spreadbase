@@ -30,7 +30,7 @@ import com.flores.h2.spreadbase.util.BuilderUtil;
 public class TestOutputDefinitions {
 
 	private static final String TEST_FILE = "./src/test/resources/test.xlsx";
-	private static final String TEST_CONN_STR_DB = "./target/test-db/test;MV_STORE=FALSE;FILE_LOCK=NO";
+	private static final String TEST_CONN_STR_DB = "%s;MV_STORE=FALSE;FILE_LOCK=NO";
 	private static final String OUTPUT_DIR =  "./target/test-output";
 	
 	private static File in;
@@ -43,8 +43,8 @@ public class TestOutputDefinitions {
 		LoggedTest.init();
 		
 		in = new File(TEST_FILE);
-		sqlOut = new File(OUTPUT_DIR, BuilderUtil.fileAsSqlFile(in)
-				.getName());
+		sqlOut = new File(OUTPUT_DIR, 
+			BuilderUtil.fileAsSqlFile(in).getName());
 
 		new File(OUTPUT_DIR).mkdir();
 	}
@@ -70,27 +70,15 @@ public class TestOutputDefinitions {
 	 */
 	@Test
 	public void testLoad() throws Exception {
-		logger.debug("determining data definitions...");
-
-		Connection conn = null;
 		
-		try {
-			File outDir = new File(OUTPUT_DIR);
-			List<ITable> tables = Spreadbase.analyze(in);
-			Spreadbase.write(in, outDir);
-	
-			//write the definitions from analysis
-			TableDefinitionWriter w = new TableDefinitionWriter(sqlOut, new DataDefinitionBuilder());
-			w.write(tables);
-			w.close();
-	
-			//load driver & open connection
-			Class.forName("org.h2.Driver");
-			conn = DriverManager.getConnection("jdbc:h2:" + TEST_CONN_STR_DB, "sa", "");
+		Spreadbase.asDataSource(in);
 			
-			//run the output script of the table definition process
-			RunScript.execute(conn, new InputStreamReader(new FileInputStream(sqlOut)));
-			
+		//load driver & open connection
+		Class.forName("org.h2.Driver");
+		try(Connection conn = DriverManager.getConnection(
+				"jdbc:h2:" + String.format(TEST_CONN_STR_DB, BuilderUtil.fileAsH2File(in))
+				, "sa", "")) {
+
 			String TEST_QUERY = "select * from employees e "
 					+ "left join address a on e.id = a.id	"
 					+ "left join scores s on s.id = e.id";
@@ -120,8 +108,6 @@ public class TestOutputDefinitions {
 			} else fail();
 			
 			System.out.println("=======================================================");
-		} finally {
-			if(conn != null) conn.close();
 		}
 	}
 	

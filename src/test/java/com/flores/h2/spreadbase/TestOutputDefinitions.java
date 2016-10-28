@@ -1,28 +1,23 @@
 package com.flores.h2.spreadbase;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
 
-import org.h2.tools.RunScript;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.flores.LoggedTest;
-import com.flores.h2.spreadbase.Spreadbase;
 import com.flores.h2.spreadbase.io.TableDefinitionWriter;
 import com.flores.h2.spreadbase.model.ITable;
 import com.flores.h2.spreadbase.model.impl.h2.DataDefinitionBuilder;
-import com.flores.h2.spreadbase.util.BuilderUtil;
+import com.flores.h2.spreadbase.util.SpreadbaseUtil;
 
 /**
  * @author Jason
@@ -36,15 +31,13 @@ public class TestOutputDefinitions {
 	private static File in;
 	private static File sqlOut;
 
-	private static final Logger logger = LoggerFactory.getLogger(TestOutputDefinitions.class);
-	
 	@BeforeClass
 	public static void init() {
 		LoggedTest.init();
 		
 		in = new File(TEST_FILE);
 		sqlOut = new File(OUTPUT_DIR, 
-			BuilderUtil.fileAsSqlFile(in).getName());
+			SpreadbaseUtil.fileAsSqlFile(in).getName());
 
 		new File(OUTPUT_DIR).mkdir();
 	}
@@ -76,7 +69,7 @@ public class TestOutputDefinitions {
 		//load driver & open connection
 		Class.forName("org.h2.Driver");
 		try(Connection conn = DriverManager.getConnection(
-				"jdbc:h2:" + String.format(TEST_CONN_STR_DB, BuilderUtil.fileAsH2File(in))
+				"jdbc:h2:" + String.format(TEST_CONN_STR_DB, SpreadbaseUtil.fileAsH2Db(in))
 				, "sa", "")) {
 
 			String TEST_QUERY = "select * from employees e "

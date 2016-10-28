@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.flores.h2.spreadbase.model.impl.DataType;
-import com.flores.h2.spreadbase.util.BuilderUtil;
+import com.flores.h2.spreadbase.util.SpreadbaseUtil;
 
 /**
  * 
@@ -26,7 +26,7 @@ public class TestDataTypeRules {
 		assertNotNull(testDt);
 		assertTrue(testDt.getTypeName().equals(String.class.getTypeName()));
 		assertEquals(5, testDt.getPrecision());
-		assertEquals(BuilderUtil.UNSET_INT, testDt.getScale());
+		assertEquals(SpreadbaseUtil.UNSET_INT, testDt.getScale());
 		
 		//create Double
 		testDt = makeDataType("1000.23");
@@ -40,7 +40,7 @@ public class TestDataTypeRules {
 		assertNotNull(testDt);
 		assertTrue(testDt.getTypeName().equals(Integer.class.getTypeName()));
 		assertEquals(1000, testDt.getPrecision());
-		assertEquals(BuilderUtil.UNSET_INT, testDt.getScale());
+		assertEquals(SpreadbaseUtil.UNSET_INT, testDt.getScale());
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class TestDataTypeRules {
 		testDt = makeDataType("1");
 		assertTrue(testDt.getTypeName().equals(Integer.class.getTypeName()));
 		assertEquals(1, testDt.getPrecision());
-		assertEquals(BuilderUtil.UNSET_INT, testDt.getScale());
+		assertEquals(SpreadbaseUtil.UNSET_INT, testDt.getScale());
 		
 		//type should change along with precision and scale
 		adjcol = mergeDataType(testDt, "22.2");

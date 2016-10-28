@@ -14,6 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static com.flores.h2.spreadbase.util.SpreadbaseUtil.*;
+
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -34,7 +36,7 @@ import com.flores.h2.spreadbase.model.impl.Column;
 import com.flores.h2.spreadbase.model.impl.DataType;
 import com.flores.h2.spreadbase.model.impl.Table;
 import com.flores.h2.spreadbase.model.impl.h2.DataDefinitionBuilder;
-import com.flores.h2.spreadbase.util.BuilderUtil;
+
 import com.flores.h2.spreadbase.util.TypeHierarchy;
 
 /**
@@ -110,8 +112,8 @@ public class Spreadbase {
 					}
 					catch(Exception e) {
 						//these errors are common enough to only debug log them
-						logger.debug("error at cell {}:{}", BuilderUtil
-								.columnNumberToExcelColumnName(x), y);
+						logger.debug("error at cell {}:{}",
+								columnNumberToExcelColumnName(x), y);
 
 						//add empty cell data
 						data.add(EMPTY_CELL_DATA);
@@ -148,7 +150,7 @@ public class Spreadbase {
 
 		//write the definitions from analysis
 		try(TableDefinitionWriter w = new TableDefinitionWriter(
-				sqlFile = BuilderUtil.fileAsSqlFile(in), new DataDefinitionBuilder())){
+				sqlFile = fileAsSqlFile(in), new DataDefinitionBuilder())){
 			w.write(tables);
 		} catch(IOException ioe) {
 			logger.error("writing table definition: {}", ioe.getMessage());
@@ -159,7 +161,7 @@ public class Spreadbase {
 		Class.forName("org.h2.Driver");
 		Connection conn = DriverManager.getConnection(
 				"jdbc:h2:" + String.format(CONN_STR, 
-						BuilderUtil.fileAsH2File(in)), "sa", "");
+						fileAsH2Db(in)), "sa", "");
 
 		try {
 			//run the output script of the table definition process
@@ -218,8 +220,8 @@ public class Spreadbase {
 						try { data.add(getStringValue(itr.next())); }
 						catch(Exception e) {
 							//these errors are common enough to only debug log them
-							logger.debug("error at cell {}:{}", BuilderUtil
-									.columnNumberToExcelColumnName(j), k);
+							logger.debug("error at cell {}:{}", 
+									columnNumberToExcelColumnName(j), k);
 
 							//add empty cell data
 							data.add(EMPTY_CELL_DATA);
@@ -318,8 +320,8 @@ class DataTypeFactory {
 	 */
 	public static DataType makeDataType(String dataValue) {
 		Class<?> type = null;
-		int precision = BuilderUtil.UNSET_INT;
-		int scale = BuilderUtil.UNSET_INT;
+		int precision = UNSET_INT;
+		int scale = UNSET_INT;
 
 		try {	//determine type
 			Double d = Double.parseDouble(dataValue);

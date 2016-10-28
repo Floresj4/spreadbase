@@ -7,10 +7,11 @@ import java.io.IOException;
 import org.apache.poi.ss.usermodel.Sheet;
 
 /**
- * 
- * @author Jason Flores
+ * SpreadbaseUtil provides static methods specific to 
+ * spreadbase operations.
+ * @author Jason
  */
-public class BuilderUtil {
+public class SpreadbaseUtil {
 
 	public static final int UNSET_INT = Integer.MIN_VALUE;
 	public static final String NEW_LINE = System.getProperty("line.separator");
@@ -34,12 +35,23 @@ public class BuilderUtil {
 	}
 	
 	/**
-	 * 
+	 * The H2 database name within a connection string should
+	 * not contain the extension
+	 * @param f
+	 * @return
+	 */
+	public static File fileAsH2Db(File f) {
+		return fileAs(f, "");
+	}
+	
+	/**
+	 * For downloading, the file must contain the extension
+	 * to find on the file system
 	 * @param f
 	 * @return
 	 */
 	public static File fileAsH2File(File f) {
-		return fileAs(f, "");
+		return fileAs(f, ".h2.db");
 	}
 	
 	/**
@@ -97,7 +109,7 @@ public class BuilderUtil {
 	}
 
 	public static boolean isCsvFile(File path) {
-		return BuilderUtil.getFileExtension(path).equals("csv");
+		return SpreadbaseUtil.getFileExtension(path).equals("csv");
 	}
 	
 	public static String sheetNameToFilename(Sheet sheet) {

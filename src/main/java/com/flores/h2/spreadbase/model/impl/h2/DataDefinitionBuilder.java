@@ -8,7 +8,7 @@ import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.IDefinitionBuilder;
 import com.flores.h2.spreadbase.model.impl.AbstractDataDefinition;
 import com.flores.h2.spreadbase.model.impl.DataType;
-import com.flores.h2.spreadbase.util.BuilderUtil;
+import com.flores.h2.spreadbase.util.SpreadbaseUtil;
 
 /**
  * Utility class for creating H2 definitions
@@ -31,7 +31,7 @@ public class DataDefinitionBuilder implements IDefinitionBuilder {
 
 			default:
 
-				return (dt.getScale() == BuilderUtil.UNSET_INT)
+				return (dt.getScale() == SpreadbaseUtil.UNSET_INT)
 					? asNaturalNumber(column, dt)
 							: asRationalNumber(column, dt);
 				

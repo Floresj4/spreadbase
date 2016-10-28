@@ -8,7 +8,7 @@ import java.util.Set;
 
 import com.flores.h2.spreadbase.model.IColumn;
 import com.flores.h2.spreadbase.model.ITable;
-import com.flores.h2.spreadbase.util.BuilderUtil;
+import com.flores.h2.spreadbase.util.SpreadbaseUtil;
 
 /**
  * A map of columns backed by a LinkedHashMap.  If any constructor 
@@ -148,14 +148,14 @@ public class Table implements ITable {
 	
 	public String toString() {
 		StringBuilder builder = new StringBuilder(getName())
-			.append(" (").append(BuilderUtil.NEW_LINE);
+			.append(" (").append(SpreadbaseUtil.NEW_LINE);
 		
 		this.forEach((k,v) -> {
 			builder.append( String.format("\t%s", v.getName()))
-				.append(BuilderUtil.NEW_LINE);	
+				.append(SpreadbaseUtil.NEW_LINE);	
 		});
 		
-		return builder.append(")").append(BuilderUtil.NEW_LINE).toString();
+		return builder.append(")").append(SpreadbaseUtil.NEW_LINE).toString();
 	}
 
 	@Override

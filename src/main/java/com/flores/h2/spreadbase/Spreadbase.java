@@ -72,58 +72,59 @@ public class Spreadbase {
 	public static List<ITable> analyze(final File fin, List<String>filter) throws Exception {
 		List<ITable> tables = new LinkedList<>();
 		
-		Workbook workbook = WorkbookFactory.create(fin);
-		for(int i = 0; i < workbook.getNumberOfSheets(); i++) {
-			Sheet sheet = workbook.getSheetAt(i);
-
-			//make sure we skip the table of contents file
-			if(isFiltered(sheet, filter))
-				continue;
-
-			//some spreadsheets might not have data
-			Row firstRow = null;
-			if((firstRow = containsRowData(sheet)) == null)
-				continue;
-
-			logger.debug("inspecting {}", sheet.getSheetName());
-
-			//initialize the table and add columns
-			ITable table = initializeTable(sheet, fin);
-			table.putAll(createColumns(firstRow));
-
-			List<Object>data = null;
-			for(int x = 1; x <= sheet.getLastRowNum(); x++) {
-				Row row = sheet.getRow(x);
-
-				//reset to build the tab delimited data
-				data = new LinkedList<>();
-				for(int y = 0; y < table.size(); y++) {
-					try {
-						IColumn column = table.get(y);
-						String value = getStringValue(row.getCell(y));
-
-						//for DDL handling
-						DataType finaltype = DataTypeFactory.mergeDataType(
-								DataTypeFactory.makeDataType(value),
-								column.getDataType());
-						column.setDataType(finaltype);
-
-						data.add(value);
-					}
-					catch(Exception e) {
-						//these errors are common enough to only debug log them
-						logger.debug("error at cell {}:{}",
-								columnNumberToExcelColumnName(x), y);
-
-						//add empty cell data
-						data.add(EMPTY_CELL_DATA);
+		try(Workbook workbook = WorkbookFactory.create(fin)) {
+			for(int i = 0; i < workbook.getNumberOfSheets(); i++) {
+				Sheet sheet = workbook.getSheetAt(i);
+	
+				//make sure we skip the table of contents file
+				if(isFiltered(sheet, filter))
+					continue;
+	
+				//some spreadsheets might not have data
+				Row firstRow = null;
+				if((firstRow = containsRowData(sheet)) == null)
+					continue;
+	
+				logger.debug("inspecting {}", sheet.getSheetName());
+	
+				//initialize the table and add columns
+				ITable table = initializeTable(sheet, fin);
+				table.putAll(createColumns(firstRow));
+	
+				List<Object>data = null;
+				for(int x = 1; x <= sheet.getLastRowNum(); x++) {
+					Row row = sheet.getRow(x);
+	
+					//reset to build the tab delimited data
+					data = new LinkedList<>();
+					for(int y = 0; y < table.size(); y++) {
+						try {
+							IColumn column = table.get(y);
+							String value = getStringValue(row.getCell(y));
+	
+							//for DDL handling
+							DataType finaltype = DataTypeFactory.mergeDataType(
+									DataTypeFactory.makeDataType(value),
+									column.getDataType());
+							column.setDataType(finaltype);
+	
+							data.add(value);
+						}
+						catch(Exception e) {
+							//these errors are common enough to only debug log them
+							logger.debug("error at cell {}:{}",
+									columnNumberToExcelColumnName(x), y);
+	
+							//add empty cell data
+							data.add(EMPTY_CELL_DATA);
+						}
 					}
 				}
+	
+				tables.add(table);
 			}
-
-			tables.add(table);
 		}
-		
+
 		return tables;
 	}
 
